@@ -19,14 +19,16 @@ if __name__ == "__main__":
     BLUEPRINT_ID = 6
 
     # Query to get a list of print providers for the blueprint
-    # TODO- get print providers for blueprint (store provider id)
-    PRINT_PROVIDER_ID = 111
+    providers = printify.get_all_providers(BLUEPRINT_ID)
+    PRINT_PROVIDER_ID = 110
 
     # Query to get a list of variants for the blueprint
     variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+    VARIANT_ID = 12124
 
     # Query to get a list of shipping costs for each variant
-    # TODO - printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID, variants)
+    shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+
 
     # Upload Images to Printify / Github
     # TODO - printify.upload_images(BLUEPRINT_ID, PRINT_PROVIDER_ID, variants)
