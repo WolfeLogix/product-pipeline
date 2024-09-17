@@ -88,6 +88,8 @@ class printify_util():
                 })
                 if placeholder not in unique_print_sizes:
                     unique_print_sizes.append(placeholder)
+        print(f"Unique Print Sizes: {unique_print_sizes}")
+        # TODO - Filter by Front position, various sizes. options(front, back, left_sleeve, right_sleeve, neck)
         return return_response
 
     def get_shipping_costs(self, blueprint_id, print_provider_id):
@@ -106,4 +108,8 @@ class printify_util():
         return None
 
 
- 
+
+
+    def upload_image_url(url):
+        """Uploads an image to Printify and returns the URL."""
+        pass

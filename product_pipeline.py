@@ -29,7 +29,6 @@ if __name__ == "__main__":
     # Query to get a list of shipping costs for each variant
     shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
-
     # Upload Images to Printify / Github
     # TODO - printify.upload_images(BLUEPRINT_ID, PRINT_PROVIDER_ID, variants)
     # OR
