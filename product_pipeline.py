@@ -24,18 +24,21 @@ if __name__ == "__main__":
 
     # Query to get a list of variants for the blueprint
     variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
-    VARIANT_ID = 12124
 
     # Query to get a list of shipping costs for each variant
     shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
-    # Upload Images to Printify / Github
-    # TODO - printify.upload_images(BLUEPRINT_ID, PRINT_PROVIDER_ID, variants)
-    # OR
-    # TODO - github commit images to public repo
+    # # Upload Images to Printify / Github
+    # image_url = "https://raw.githubusercontent.com/parishwolfe/product-pipeline/refs/heads/main/HelloWorld_white.png"
+    # printify.upload_image(image_url)
 
     # Create Product in Printify
-    # TODO - printify.create_product(BLUEPRINT_ID, PRINT_PROVIDER_ID, variants, shipping_costs, image)
+    printify.create_product(
+        blueprint_id=BLUEPRINT_ID, 
+        print_provider_id=PRINT_PROVIDER_ID, 
+        variants=variants, 
+        image_id="66eb5eb5557b6ed02c9276aa"
+    )
 
     # Publish Product in Printify (Rate Limited to 200/30min or 1 per 10 seconds)
     # TODO - printify.publish_product(PRODUCT_ID)
