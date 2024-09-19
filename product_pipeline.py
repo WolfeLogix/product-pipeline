@@ -10,8 +10,7 @@ from printify_util import printify_util
 if __name__ == "__main__":
     """Printify Add Product"""
 
-    ### for item spreadsheet:
-
+    # --- Basic Setup ---#
     # Initialize Shopify and Printify API connections
     printify = printify_util()
 
@@ -20,7 +19,7 @@ if __name__ == "__main__":
 
     # Query to get a list of print providers for the blueprint
     providers = printify.get_all_providers(BLUEPRINT_ID)
-    PRINT_PROVIDER_ID = 110
+    PRINT_PROVIDER_ID = 99
 
     # Query to get a list of variants for the blueprint
     variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
@@ -28,12 +27,17 @@ if __name__ == "__main__":
     # Query to get a list of shipping costs for each variant
     shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
+
+    # --- Per Product Setup ---#
+    ## FOR IMAGE IN SPREADSHEET:
+    # Needed: title, description, image_url
+
     # # Upload Images to Printify / Github
     # image_url = "https://raw.githubusercontent.com/parishwolfe/product-pipeline/refs/heads/main/HelloWorld_white.png"
     # printify.upload_image(image_url)
 
     # Create Product in Printify
-    printify.create_product(
+    PRODUCT_ID = printify.create_product(
         blueprint_id=BLUEPRINT_ID, 
         print_provider_id=PRINT_PROVIDER_ID, 
         variants=variants, 
@@ -41,4 +45,4 @@ if __name__ == "__main__":
     )
 
     # Publish Product in Printify (Rate Limited to 200/30min or 1 per 10 seconds)
-    # TODO - printify.publish_product(PRODUCT_ID)
+    printify.publish_product(PRODUCT_ID)

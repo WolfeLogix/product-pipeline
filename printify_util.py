@@ -49,8 +49,9 @@ class printify_util():
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             data = response.json()
-            print(data)
-            #TODO - Write this to a file
+            print("Successully fetched product catalog")
+            # with open("catalog.json", "wb") as file:
+            #     file.write(response.text.encode('utf-8'))
         else:
             print(f"Failed to fetch product catalog. Status code: {response.status_code}")
 
@@ -60,7 +61,7 @@ class printify_util():
         response = requests.get(uri, headers=self.headers)
         if response.status_code != 200:
             print(f"Failed to fetch print providers. Status code: {response.status_code}")
-
+        print("Successully fetched print providers")
         # Parse response
         provider_ids = []
         for provider in response.json():
@@ -76,14 +77,16 @@ class printify_util():
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
             print(f"Failed to fetch product catalog. Status code: {response.status_code}")
-
+        print("Successully fetched variants")
         # Parse response
         return_response = []
         unique_print_sizes = []
+        default_variant_set = False
 
         for variant in response.json()['variants']:
             for placeholder in variant['placeholders']: # TODO - Remove this nested loop
                 price = None
+                default_variant = False
                 match variant['options']['size']:
                     case "XS": 
                         price = self.typical_size_price
@@ -93,17 +96,26 @@ class printify_util():
                         price = self.typical_size_price
                     case "L":
                         price = self.typical_size_price
+                        if variant['options']['color'] == "Black" and not default_variant_set:
+                            default_variant = True
+                            default_variant_set = True
                     case "XL":
                         price = self.typical_size_price
                     case _:
                         price = self.extended_size_price
+                        continue
+                if variant['options']['color'] not in [
+                    "Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Orange", "purple"
+                    ]:
+                    continue
                 return_response.append({ 
                     'id': variant['id'],
                     # 'color': variant['options']['color'],
                     # 'size': variant['options']['size'],
                     # 'placeholder': placeholder
                     "price": price,
-                    "is_enabled": True
+                    "is_enabled": True,
+                    "is_default": default_variant
                 })
                 if placeholder not in unique_print_sizes:
                     unique_print_sizes.append(placeholder)
@@ -146,8 +158,8 @@ class printify_util():
         """Creates a product in Printify."""
         url = f"{self.BASE_URL}/shops/{self.store_id}/products.json"
         product = {
-            "title": "Hello World T-Shirt",
-            "description": "This is a test product created by the Printify API.",
+            "title": "API Test 5",
+            "description": "Limit Variants to regular sizes and colors",
             "blueprint_id": blueprint_id,
             "print_provider_id": print_provider_id,
             "variants": variants, # [{"id": 123, "price": 1999, is_enabled: true}]
@@ -174,9 +186,34 @@ class printify_util():
         }
         response = requests.post(url, headers=self.headers, json=product)
         if response.status_code == 200:
-            print(f"Product created successfully: {response.json()}")
+            print(f"Product created successfully: {response.json()['id']}")
+            return response.json()['id']
+            # # write response to a file
+            # with open("product.json", "wb") as file:
+            #     file.write(response.text.encode('utf-8'))
+            
         else:
             print(f"Failed to create product. Status code: {response.status_code}")
+            return None
+
+    def publish_product(self, product_id):
+        """Publishes a product in Printify."""
+        url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
+        data = {
+            "title": True,
+            "description": True,
+            "images": True,
+            "variants": True,
+            "tags": True
+            # "keyFeatures": True,
+            # "shipping_template": True
+        }
+        response = requests.post(url, headers=self.headers, json=data)
+        if response.status_code == 200:
+            print(f"Product published successfully: {product_id}")
             print(response.json())
+        else:
+            print(f"Failed to publish product. Status code: {response.status_code}")
+
 
         # TODO - update product with correct prices after shipping cost and cogs 
