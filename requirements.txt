@@ -2,4 +2,5 @@ requests
 dotenv
 ShopifyAPI
 Pillow
-openai
+openai==1.47.1
+pydantic==2.9.2
