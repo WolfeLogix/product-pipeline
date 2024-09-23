@@ -16,7 +16,6 @@ def create_text_image(text: str, height: int, width: int, file_name: str, color:
             None
         """
 
-
     # Create a blank transparent image
     image = Image.new("RGBA", (width, height), (255, 255, 255, 0))
     draw = ImageDraw.Draw(image)
