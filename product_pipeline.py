@@ -1,8 +1,8 @@
 # from dotenv import load_dotenv
 import os
 
-from shopify_util import shopify_util
-from printify_util import printify_util
+from util.shopify_util import shopify_util
+from util.printify_util import printify_util
 
 # # Load environment variables from .env file
 # load_dotenv('.env')

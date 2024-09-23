@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 
-def create_text_image(text: str, height: int, width: int, file_name: str, color="#000000": str):
+def create_text_image(text: str, height: int, width: int, file_name: str, color: str="#000000"):
     def create_text_image(text: str, height: int, width: int, file_name: str, color="#000000"):
         """
         Creates an image with the specified text centered within the given dimensions and saves it as a PNG file.
@@ -112,15 +112,15 @@ create_text_image(
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     800,
     1200,
-    "test_1.png",
+    "img/test_1.png",
     "#000000"
 )
 create_text_image(
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     800,
     400,
-    "test_2.png",
+    "img/test_2.png",
     "#FF5733"
 )
-create_text_image("Lorem ipsum dolor sit amet", 800, 1200, "test_3.png")
-create_text_image("Lorem ipsum dolor sit amet", 800, 400, "test_4.png", "#FFFFFF")
+create_text_image("Lorem ipsum dolor sit amet", 800, 1200, "img/test_3.png")
+create_text_image("Lorem ipsum dolor sit amet", 800, 400, "img/test_4.png", "#FFFFFF")
