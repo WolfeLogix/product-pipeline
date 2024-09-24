@@ -1,5 +1,5 @@
 requests
-dotenv
+python-dotenv
 ShopifyAPI
 Pillow
 openai==1.47.1

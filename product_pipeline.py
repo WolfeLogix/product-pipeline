@@ -1,11 +1,11 @@
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
 from util.shopify_util import shopify_util
 from util.printify_util import printify_util
 
 # # Load environment variables from .env file
-# load_dotenv('.env')
+load_dotenv('.env')
 
 if __name__ == "__main__":
     """Printify Add Product"""
@@ -46,3 +46,6 @@ if __name__ == "__main__":
 
     # Publish Product in Printify (Rate Limited to 200/30min or 1 per 10 seconds)
     printify.publish_product(PRODUCT_ID)
+
+
+    print(os.getenv("ENV_TEST"))
