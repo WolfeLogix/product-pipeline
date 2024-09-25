@@ -5,7 +5,6 @@ import uuid
 import random
 from datetime import datetime
 
-from util.shopify_util import shopify_util
 from util.printify_util import printify_util
 from util.ai_util import ai_util
 from util.image_util import create_text_image

@@ -106,20 +106,22 @@ def does_text_fit(draw, text, font, width, height):
     fits = (total_height <= height) and not any_line_too_wide
     return fits, wrapped_text, total_height
 
-# Example usage:
-create_text_image(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    800,
-    1200,
-    "img/test_1.png",
-    "#000000"
-)
-create_text_image(
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    800,
-    400,
-    "img/test_2.png",
-    "#FF5733"
-)
-create_text_image("Lorem ipsum dolor sit amet", 800, 1200, "img/test_3.png")
-create_text_image("Lorem ipsum dolor sit amet", 800, 400, "img/test_4.png", "#FFFFFF")
+
+if __name__ == "__main__":
+    # Example usage:
+    create_text_image(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        800,
+        1200,
+        "img/test_1.png",
+        "#000000"
+    )
+    create_text_image(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        800,
+        400,
+        "img/test_2.png",
+        "#FF5733"
+    )
+    create_text_image("Lorem ipsum dolor sit amet", 800, 1200, "img/test_3.png")
+    create_text_image("Lorem ipsum dolor sit amet", 800, 400, "img/test_4.png", "#FFFFFF")
