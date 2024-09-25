@@ -1,20 +1,19 @@
 from PIL import Image, ImageDraw, ImageFont
 
 def create_text_image(text: str, height: int, width: int, file_name: str, color: str="#000000"):
-    def create_text_image(text: str, height: int, width: int, file_name: str, color="#000000"):
-        """
-        Creates an image with the specified text centered within the given dimensions and saves it as a PNG file.
-        Args:
-            text (str): The text to be displayed on the image.
-            height (int): The height of the image in pixels.
-            width (int): The width of the image in pixels.
-            file_name (str): The name of the file to save the image as, including the file extension (e.g., 'image.png').
-            color (str, optional): The color of the text in hexadecimal format (default is black, "#000000").
-        Raises:
-            ValueError: If the text cannot fit into the image at the minimum font size.
-        Returns:
-            None
-        """
+    """
+    Creates an image with the specified text centered within the given dimensions and saves it as a PNG file.
+    Args:
+        text (str): The text to be displayed on the image.
+        height (int): The height of the image in pixels.
+        width (int): The width of the image in pixels.
+        file_name (str): The name of the file to save the image as, including the file extension (e.g., 'image.png').
+        color (str, optional): The color of the text in hexadecimal format (default is black, "#000000").
+    Raises:
+        ValueError: If the text cannot fit into the image at the minimum font size.
+    Returns:
+        None
+    """
 
     # Create a blank transparent image
     image = Image.new("RGBA", (width, height), (255, 255, 255, 0))
@@ -70,6 +69,7 @@ def create_text_image(text: str, height: int, width: int, file_name: str, color:
 
     # Save the image
     image.save(file_name, "PNG")
+    return file_name
 
 def does_text_fit(draw, text, font, width, height):
     ascent, descent = font.getmetrics()

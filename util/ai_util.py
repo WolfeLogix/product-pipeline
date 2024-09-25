@@ -2,6 +2,7 @@ from openai import OpenAI
 from os import getenv
 from pydantic import BaseModel
 from typing import Optional
+from typing import Type
 
 class ai_util:
     """
@@ -64,20 +65,21 @@ class ai_util:
         return completion.choices[0].message.content
 
 
-# Example usage:
-ai = ai_util()
-class joke(BaseModel):
-    setup: str
-    punchline: str
+if __name__ == "__main__":
+    # Example usage:
+    ai = ai_util()
+    class joke(BaseModel):
+        setup: str
+        punchline: str
 
-class jokeList(BaseModel):
-    jokes: list[joke]
+    class jokeList(BaseModel):
+        jokes: list[joke]
 
-response = ai.chat(
-    messages = [
-        {"role": "system", "content": "You are a helpful chatbot"},
-        {"role": "user", "content": "Give me 10 funny jokes"}
-    ],
-    output_model=jokeList
-)
-print(response)
+    response = ai.chat(
+        messages = [
+            {"role": "system", "content": "You are a helpful chatbot"},
+            {"role": "user", "content": "Give me 10 funny jokes"}
+        ],
+        output_model=jokeList
+    )
+    print(response)
