@@ -12,3 +12,10 @@ From there, Printify takes over and the following things happen
 - products are synced with shopify, and a number of other retailers
 - orders are automatically sent to the print provider when a sale is made
 
+## Reuqired Environment Variables
+
+- PRINTIFY_API_KEY
+- OPENAI_API_KEY
+- SHOPIFY_API_KEY
+- SHOPIFY_API_SECRET
+- SHOPIFY_SHOP_NAME
