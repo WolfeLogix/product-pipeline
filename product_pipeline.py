@@ -3,12 +3,13 @@ import os
 import argparse
 import uuid
 import random
+import json
 from datetime import datetime
 
 from util.printify_util import printify_util
 from util.ai_util import ai_util
 from util.image_util import create_text_image
-from res.models.tshirt import tshirt_from_ai, basic_tshirt_product
+from res.models.tshirt import tshirt_from_ai, tshirt_from_ai_list
 
 from dotenv import load_dotenv
 
@@ -47,18 +48,26 @@ def main():
 
     response = ai.chat(
         messages = prompt,
-        output_model=tshirt_from_ai
+        output_model=tshirt_from_ai_list,
     )
-    for pattern in response.patterns:
+    # Parse the response
+    print(response)
+    print(type(response))
+    parsed_response = json.loads(response)
+    patterns = parsed_response['patterns']
+
+
+
+    for pattern in patterns:
         print(pattern) #[{pattern.title, pattern.description, pattern.tshirt_text}]
         # generate filename
-        filename = uuid.uuid5(uuid.NAMESPACE_DNS, random.getrandombits(128))
+        #filename = uuid.uuid5(uuid.NAMESPACE_DNS, random.getrandbits(128)) #TODO - broken
         # generate image
         create_text_image(
-            text=imagepattern.tshirt_text,
+            text=pattern.get("tshirt_text"),
             height=1000,
             width=1000,
-            file_name=filename
+            file_name=pattern.get("title"),
             color="#000000"
         ) #TOOD = make both white text and black text version of this
         # upload the image
