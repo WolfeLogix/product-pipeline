@@ -70,7 +70,7 @@ def main():
         current_time = datetime.now()
 
         # Format the date and time as a string
-        folder_name = current_time.strftime("%Y-%m-%d_%H-%M-%S")
+        folder_name = f"./img/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}"
 
         # Create the directory if it doesn't exist
         if not os.path.exists(folder_name):
@@ -81,17 +81,23 @@ def main():
             text=pattern.get("tshirt_text"),
             height=1000,
             width=1000,
-            file_name=f"img/{folder_name}/{pattern.get('title')}.png",
+            file_name=f"./{folder_name}/{pattern.get('title')}.png",
             color="#000000"
         ) #TOOD = make both white text and black text version of this
-        # upload the image
 
-        directory_with_images = '/path/to/your/images'
-        github_repository_url = 'https://github.com/yourusername/yourrepo.git'
-        personal_access_token = os.getenv('GITHUB_PAT')
-        uploader = GithubUploader(directory_with_images, github_repository_url, personal_access_token)
-        uploader.upload()
-        # create product in printify
+
+    # upload the images to github
+    directory_with_images = f"{folder_name}/"
+    github_repository_url = os.getenv("GITHUP_UPLOAD_REPO")
+    personal_access_token = os.getenv("GITHUB_PAT")
+    print(directory_with_images, github_repository_url, personal_access_token)
+    uploader = GithubUploader(
+        directory_with_images, 
+        github_repository_url, 
+        personal_access_token
+    )
+    image_urls = uploader.upload()
+    # create product in printify
 
 
 
