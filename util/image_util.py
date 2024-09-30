@@ -171,7 +171,7 @@ def does_text_fit(draw, text, font, width, height):
 
 if __name__ == "__main__":
     # Create output directory if it doesn't exist
-    output_dir = "../img"
+    output_dir = "../img/test/"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 

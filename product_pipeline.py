@@ -10,6 +10,7 @@ from util.printify_util import printify_util
 from util.ai_util import ai_util
 from util.image_util import create_text_image
 from res.models.tshirt import tshirt_from_ai, tshirt_from_ai_list
+from util.github_util import GithubUploader
 
 from dotenv import load_dotenv
 
@@ -60,18 +61,43 @@ def main():
 
     for pattern in patterns:
         print(pattern) #[{pattern.title, pattern.description, pattern.tshirt_text}]
+
+
         # generate filename
-        #filename = uuid.uuid5(uuid.NAMESPACE_DNS, random.getrandbits(128)) #TODO - broken
+        # filename = uuid.uuid5(uuid.NAMESPACE_DNS, random.getrandbits(128)) #TODO - broken
+        
+        # Get the current date and time
+        current_time = datetime.now()
+
+        # Format the date and time as a string
+        folder_name = f"./img/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}"
+
+        # Create the directory if it doesn't exist
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+
         # generate image
         create_text_image(
             text=pattern.get("tshirt_text"),
             height=1000,
             width=1000,
-            file_name=pattern.get("title"),
+            file_name=f"./{folder_name}/{pattern.get('title')}.png",
             color="#000000"
         ) #TOOD = make both white text and black text version of this
-        # upload the image
-        # create product in printify
+
+
+    # upload the images to github
+    directory_with_images = f"{folder_name}/"
+    github_repository_url = os.getenv("GITHUP_UPLOAD_REPO")
+    personal_access_token = os.getenv("GITHUB_PAT")
+    print(directory_with_images, github_repository_url, personal_access_token)
+    uploader = GithubUploader(
+        directory_with_images, 
+        github_repository_url, 
+        personal_access_token
+    )
+    uploader.upload()
+    # create product in printify
 
 
 
