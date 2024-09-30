@@ -96,7 +96,7 @@ def main():
         github_repository_url, 
         personal_access_token
     )
-    image_urls = uploader.upload()
+    uploader.upload()
     # create product in printify
 
 

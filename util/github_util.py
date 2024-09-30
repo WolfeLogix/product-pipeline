@@ -6,19 +6,6 @@ from github import Github
 from git import Repo
 
 
-def copy_files(src_dir, dst_dir):
-    for item in os.listdir(src_dir):
-        s = os.path.join(src_dir, item)
-        d = os.path.join(dst_dir, item)
-        if os.path.isdir(s):
-            if os.path.exists(d):
-                copy_files(s, d)
-            else:
-                shutil.copytree(s, d)
-        else:
-            shutil.copy2(s, d)
-
-
 class GithubUploader:
     def __init__(self, directory, repo_url, access_token):
         self.directory = directory
@@ -70,8 +57,15 @@ class GithubUploader:
         new_branch = repo.create_head(branch_name)
         new_branch.checkout()
 
-        # Copy new images from 'directory' to 'repo_dir'
-        copy_files(self.directory, self.repo_dir)
+        # Copy the entire directory into the repo_dir
+        directory_name = os.path.basename(os.path.normpath(self.directory))
+        dst_dir = os.path.join(self.repo_dir, directory_name)
+
+        # If destination directory exists, remove it
+        if os.path.exists(dst_dir):
+            shutil.rmtree(dst_dir)
+
+        shutil.copytree(self.directory, dst_dir)
 
         # Add all changes
         repo.git.add(A=True)
