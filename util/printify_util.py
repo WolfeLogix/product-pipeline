@@ -203,6 +203,10 @@ class printify_util():
             print(f"Failed to create product. Status code: {response.status_code}")
             return None
 
+    # def deactivate invalid products
+    # get product by id then update the product with the variants that are available
+
+
     def publish_product(self, product_id):
         """Publishes a product in Printify."""
         url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
