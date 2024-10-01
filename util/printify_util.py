@@ -104,10 +104,10 @@ class printify_util():
                     case _:
                         price = self.extended_size_price
                         continue
-                if variant['options']['color'] not in [
-                    "Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Orange", "purple"
-                    ]:
-                    continue
+                # if variant['options']['color'] not in [
+                #     "Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Orange", "purple"
+                #     ]:
+                #     continue
                 return_response.append({ 
                     'id': variant['id'],
                     # 'color': variant['options']['color'],
@@ -191,7 +191,14 @@ class printify_util():
             # # write response to a file
             # with open("product.json", "wb") as file:
             #     file.write(response.text.encode('utf-8'))
-            
+        # TODO - This is what needs to be done for this PR
+        # WOW CAN'T BELIEVE I HAVE TO DO THIS
+        # Get product by Product ID
+            # parse the variants in the product
+            # if variant `is_available` is false, add it to the removal list
+        # update the product with all vaiants except for those that are not available
+
+
         else:
             print(f"Failed to create product. Status code: {response.status_code}")
             return None
