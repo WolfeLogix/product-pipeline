@@ -58,14 +58,9 @@ def main():
     patterns = parsed_response['patterns']
 
 
-
+    # Create images and push to github
     for pattern in patterns:
         print(pattern) #[{pattern.title, pattern.description, pattern.tshirt_text}]
-
-
-        # generate filename
-        # filename = uuid.uuid5(uuid.NAMESPACE_DNS, random.getrandbits(128)) #TODO - broken
-        
         # Get the current date and time
         current_time = datetime.now()
 
@@ -100,6 +95,10 @@ def main():
     # create product in printify
 
 
+    url_prefix = os.getenv("GITHUB_URL_PREFIX")
+    for pattern in patterns:
+        pattern.update({"image_url": f"{url_prefix}/{folder_name}/{pattern.get('title')}.png"})
+        print(pattern)
 
     # # --- Basic Setup ---#
     # # Initialize Shopify and Printify API connections
@@ -116,12 +115,8 @@ def main():
     # variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
     # # Query to get a list of shipping costs for each variant
-    # shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+    # # shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
-
-    # # --- Per Product Setup ---#
-    # ## FOR IMAGE IN SPREADSHEET:
-    # # Needed: title, description, image_url
 
     # # # Upload Images to Printify / Github
     # # image_url = "https://raw.githubusercontent.com/parishwolfe/product-pipeline/refs/heads/main/HelloWorld_white.png"

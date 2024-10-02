@@ -6,6 +6,7 @@ class tshirt_from_ai(BaseModel):
     description: str
     # tshirt_text is the text that will be printed on the tshirt
     tshirt_text: str
+    marketing_tags: list[str]
 
 class tshirt_from_ai_list(BaseModel):
     """A pydantic model for a list of ai generated fields"""
