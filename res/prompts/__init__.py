@@ -1,0 +1,1 @@
+from .tshirt import general_product_description, user_message

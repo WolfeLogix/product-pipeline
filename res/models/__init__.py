@@ -1,1 +1,1 @@
-from .tshirt import tshirt_from_ai, basic_tshirt_product
+from .tshirt import tshirt_from_ai, tshirt_from_ai_list

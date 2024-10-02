@@ -149,8 +149,10 @@ class printify_util():
         if response.status_code == 200:
             print(f"Image uploaded successfully: {file_name}")
             print(response.json()['id'])
+            return response.json()['id']
         else:
             print(f"Failed to upload image. Status code: {response.status_code}")
+            return None
         # {'id': '66eb5eb5557b6ed02c9276aa', 'file_name': 'HelloWorld_white.png', 'height': 3700, 'width': 3300, 'size': 32789, 'mime_type': 'image/png', 'preview_url': 'https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/19824847/8d1780de-bc40-49b2-bb05-8eb1908aa214', 'upload_time': '2024-09-18 23:13:57'}
 
 
