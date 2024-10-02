@@ -6,7 +6,7 @@ import random
 import json
 from datetime import datetime
 
-from util.printify_util import printify_util
+from util.printify_util.printify_util import printify_util
 from util.ai_util import ai_util
 from util.image_util import create_text_image
 from res.models.tshirt import tshirt_from_ai, tshirt_from_ai_list
@@ -46,6 +46,7 @@ def main():
 
     # Initialize AI
     ai = ai_util()
+    printify = printify_util()
 
     response = ai.chat(
         messages = prompt,
@@ -100,38 +101,50 @@ def main():
         pattern.update({"image_url": f"{url_prefix}/{folder_name}/{pattern.get('title')}.png"})
         print(pattern)
 
-    # # --- Basic Setup ---#
-    # # Initialize Shopify and Printify API connections
-    # printify = printify_util()
-
-    # # Manually Select Blueprint (6 = Unisex Gildan T-Shirt)
-    # BLUEPRINT_ID = 6
-
-    # # Query to get a list of print providers for the blueprint
-    # providers = printify.get_all_providers(BLUEPRINT_ID)
-    # PRINT_PROVIDER_ID = 99
-
-    # # Query to get a list of variants for the blueprint
-    # variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
-
-    # # Query to get a list of shipping costs for each variant
-    # # shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 
 
-    # # # Upload Images to Printify / Github
-    # # image_url = "https://raw.githubusercontent.com/parishwolfe/product-pipeline/refs/heads/main/HelloWorld_white.png"
-    # # printify.upload_image(image_url)
 
-    # # Create Product in Printify
-    # PRODUCT_ID = printify.create_product(
-    #     blueprint_id=BLUEPRINT_ID, 
-    #     print_provider_id=PRINT_PROVIDER_ID, 
-    #     variants=variants, 
-    #     image_id="66eb5eb5557b6ed02c9276aa"
-    # )
 
-    # # Publish Product in Printify (Rate Limited to 200/30min or 1 per 10 seconds)
-    # printify.publish_product(PRODUCT_ID)
+
+
+
+
+
+
+
+
+    # --- Basic Setup ---#
+    # Initialize Shopify and Printify API connections
+    printify = printify_util()
+
+    # Manually Select Blueprint (6 = Unisex Gildan T-Shirt)
+    BLUEPRINT_ID = 6
+
+    # Query to get a list of print providers for the blueprint
+    providers = printify.get_all_providers(BLUEPRINT_ID)
+    PRINT_PROVIDER_ID = 99
+
+    # Query to get a list of variants for the blueprint
+    variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+
+    # Query to get a list of shipping costs for each variant
+    # shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+
+
+    # # Upload Images to Printify / Github
+    image_url = "https://raw.githubusercontent.com/parishwolfe/product-pipeline/refs/heads/main/HelloWorld_white.png"
+    printify.upload_image(image_url)
+
+    # Create Product in Printify
+    PRODUCT_ID = printify.create_product(
+        blueprint_id=BLUEPRINT_ID, 
+        print_provider_id=PRINT_PROVIDER_ID, 
+        variants=variants, 
+        image_id="66eb5eb5557b6ed02c9276aa"
+    )
+
+    # Publish Product in Printify (Rate Limited to 200/30min or 1 per 10 seconds)
+    printify.publish_product(PRODUCT_ID)
 
 if __name__ == "__main__":
     main()
