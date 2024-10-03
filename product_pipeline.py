@@ -9,7 +9,7 @@ from util.printify_util.printify_util import printify_util
 from util.ai_util import ai_util
 from util.image_util import create_text_image
 from res.models.tshirt import tshirt_from_ai_list
-from res.prompts.tshirt import user_message
+from res.prompts.tshirt import user_message, blueprint_6_description
 from util.github_util import GithubUploader
 
 from dotenv import load_dotenv
@@ -20,7 +20,7 @@ load_dotenv('.env')
 # Set up argument parser
 parser = argparse.ArgumentParser(description="Utility to handle patterns and ideas.")
 parser.add_argument('-p', '--patterns', type=int, default=3, 
-                    help='Number of patterns, default is 10')
+                    help='Number of patterns, default is 3')
 parser.add_argument('idea', type=str, 
                     help='The Idea to generate patterns for')
 
@@ -48,10 +48,10 @@ def main():
     response = ai.chat(
         messages=[
             {"role": "system", "content": "You are a helpful chatbot"},
-            {"role": "user", "content": user_message % (number_of_patterns, idea)}
+            {"role": "user", "content": user_message % (number_of_patterns, idea) + blueprint_6_description},
         ],
         output_model=tshirt_from_ai_list,
-    ) #TODO - TEST TO MAKE SURE THIS WORKS using both f string and %s formatting
+    )
 
     # Parse the response
     parsed_response = json.loads(response)

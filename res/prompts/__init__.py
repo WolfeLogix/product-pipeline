@@ -1,1 +1,1 @@
-from .tshirt import general_product_description, user_message
+from .tshirt import user_message, blueprint_6_description
