@@ -149,19 +149,31 @@ class printify_util():
         if response.status_code == 200:
             print(f"Image uploaded successfully: {file_name}")
             print(response.json()['id'])
+            return response.json()['id']
         else:
             print(f"Failed to upload image. Status code: {response.status_code}")
+            return None
         # {'id': '66eb5eb5557b6ed02c9276aa', 'file_name': 'HelloWorld_white.png', 'height': 3700, 'width': 3300, 'size': 32789, 'mime_type': 'image/png', 'preview_url': 'https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/19824847/8d1780de-bc40-49b2-bb05-8eb1908aa214', 'upload_time': '2024-09-18 23:13:57'}
 
 
-    def create_product(self, blueprint_id, print_provider_id, variants, image_id):
+    def create_product(
+            self, 
+            blueprint_id, 
+            print_provider_id, 
+            variants, 
+            image_id,
+            title,
+            description,
+            marketing_tags
+            ):
         """Creates a product in Printify."""
         url = f"{self.BASE_URL}/shops/{self.store_id}/products.json"
         product = {
-            "title": "API Test 5",
-            "description": "Limit Variants to regular sizes and colors",
+            "title": title,
+            "description": description,
             "blueprint_id": blueprint_id,
             "print_provider_id": print_provider_id,
+            "tags": marketing_tags,
             "variants": variants, # [{"id": 123, "price": 1999, is_enabled: true}]
             "print_areas": [
                 {
