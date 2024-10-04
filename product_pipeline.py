@@ -4,6 +4,7 @@ import argparse
 import random
 import json
 from datetime import datetime
+from urllib.parse import quote
 
 from util.printify_util.printify_util import printify_util
 from util.ai_util import ai_util
@@ -75,7 +76,7 @@ def main():
             text=pattern.get("tshirt_text"),
             height=1000,
             width=1000,
-            file_name=f"./{folder_name}/{pattern.get('title')}.png",
+            file_name=f"{folder_name}/{pattern.get('title')}.png",
             color="#000000"
         ) #TOOD = make both white text and black text version of this
 
@@ -93,10 +94,12 @@ def main():
     uploader.upload()
 
     # Send the images to Printify
-    url_prefix = os.getenv("GITHUB_URL_PREFIX")
+    url_prefix = os.getenv("GITHUB_UPLOAD_PREFIX")
     for pattern in patterns:
         # Upload Image to Printify
-        image_url = f"{url_prefix}/{folder_name}/{pattern.get('title')}.png"
+        image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
+            quote(pattern.get('title'))}.png"
+        print("Image URL", image_url)
         image_id = printify.upload_image(image_url)
 
         # Create Product in Printify
@@ -104,7 +107,10 @@ def main():
             blueprint_id=blueprint,
             print_provider_id=printer,
             variants=variants,
-            image_id=image_id
+            image_id=image_id,
+            title=pattern.get("title"),
+            description=pattern.get("description"),
+            marketing_tags=pattern.get("marketing_tags")
         )
 
         # Publish the product
