@@ -19,3 +19,4 @@ From there, Printify takes over and the following things happen
 - SHOPIFY_API_KEY
 - SHOPIFY_API_SECRET
 - SHOPIFY_SHOP_NAME
+
