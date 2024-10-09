@@ -26,10 +26,10 @@ Initialize the Printify utility to establish API connections with Shopify and Pr
 
 ```python
 # Initialize Shopify and Printify API connections
-printify = printify_util()
+printify = PrintifyUtil()
 ```
 
-**Note:** Ensure that you have the necessary API keys and credentials configured within the `printify_util` class.
+**Note:** Ensure that you have the necessary API keys and credentials configured within the `PrintifyUtil` class.
 
 ## Select a Blueprint
 

@@ -1,1 +1,2 @@
-from .tshirt import tshirt_from_ai, tshirt_from_ai_list
+"""This module contains the pydantic models for the tshirt resource"""
+from .tshirt import TshirtFromAi, TshirtFromAiList

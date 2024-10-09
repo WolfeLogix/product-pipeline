@@ -1,4 +1,4 @@
-
+"""This is the main entrypoint for the application."""
 import os
 import argparse
 import random
@@ -6,28 +6,29 @@ import json
 from datetime import datetime
 from urllib.parse import quote
 
-from util.printify_util.printify_util import printify_util
-from util.ai_util import ai_util
-from util.image_util import create_text_image
-from res.models.tshirt import tshirt_from_ai_list
-from res.prompts.tshirt import user_message, blueprint_6_description
-from util.github_util import GithubUploader
-
 from dotenv import load_dotenv
+
+from util.printify.printify_util import PrintifyUtil
+from util.ai_util import AiUtil
+from util.image_util import create_text_image
+from util.github_util import GithubUploader
+from res.models.tshirt import TshirtFromAiList
+from res.prompts.tshirt import user_message, blueprint_6_description
+
 
 # Load environment variables from .env file
 load_dotenv('.env')
 
 # Set up argument parser
-parser = argparse.ArgumentParser(description="Utility to handle patterns and ideas.")
-parser.add_argument('-p', '--patterns', type=int, default=3, 
+parser = argparse.ArgumentParser(
+    description="Utility to handle patterns and ideas.")
+parser.add_argument('-p', '--patterns', type=int, default=3,
                     help='Number of patterns, default is 3')
-parser.add_argument('idea', type=str, 
+parser.add_argument('idea', type=str,
                     help='The Idea to generate patterns for')
 
 # Random Seeding
-current_time = int(datetime.now().timestamp())
-random.seed(current_time)
+random.seed(int(datetime.now().timestamp()))
 
 
 def main():
@@ -37,21 +38,22 @@ def main():
     number_of_patterns = args.patterns
 
     # Initialize AI
-    ai = ai_util()
+    ai = AiUtil()
 
     # Initialize and set up Printify
-    printify = printify_util()
+    printify = PrintifyUtil()
     blueprint = 6  # Unisex Gildan T-Shirt
-    printer = 99 # Printify Choice Provider
+    printer = 99  # Printify Choice Provider
     variants = printify.get_all_variants(blueprint, printer)
 
     # Get patterns from AI
     response = ai.chat(
         messages=[
             {"role": "system", "content": "You are a helpful chatbot"},
-            {"role": "user", "content": user_message % (number_of_patterns, idea) + blueprint_6_description},
+            {"role": "user", "content": user_message %
+                (number_of_patterns, idea) + blueprint_6_description},
         ],
-        output_model=tshirt_from_ai_list,
+        output_model=TshirtFromAiList,
     )
 
     # Parse the response
@@ -60,7 +62,8 @@ def main():
 
     # Create images and push to github
     for pattern in patterns:
-        print(pattern) #[{pattern.title, pattern.description, pattern.tshirt_text}]
+        # [{pattern.title, pattern.description, pattern.tshirt_text}]
+        print(pattern)
         # Get the current date and time
         current_time = datetime.now()
 
@@ -78,8 +81,7 @@ def main():
             width=1000,
             file_name=f"{folder_name}/{pattern.get('title')}.png",
             color="#000000"
-        ) #TOOD = make both white text and black text version of this
-
+        )  # TOOD = make both white text and black text version of this
 
     # upload the images to github
     directory_with_images = f"{folder_name}/"
@@ -87,8 +89,8 @@ def main():
     personal_access_token = os.getenv("GITHUB_PAT")
     print(directory_with_images, github_repository_url, personal_access_token)
     uploader = GithubUploader(
-        directory_with_images, 
-        github_repository_url, 
+        directory_with_images,
+        github_repository_url,
         personal_access_token
     )
     uploader.upload()
@@ -115,6 +117,7 @@ def main():
 
         # Publish the product
         printify.publish_product(product)
+
 
 if __name__ == "__main__":
     main()

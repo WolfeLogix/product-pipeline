@@ -1,8 +1,11 @@
-from PIL import Image, ImageDraw, ImageFont
+"""This is a utility class for creating images with text using the Pillow library."""
 import os
+
+from PIL import Image, ImageDraw, ImageFont
 
 
 def get_text_width(font, text):
+    """Returns the width of the text when rendered with the given font."""
     if hasattr(font, 'getlength'):
         # For newer versions of Pillow
         return font.getlength(text)
@@ -20,13 +23,16 @@ def get_text_width(font, text):
 
 def create_text_image(text: str, height: int, width: int, file_name: str, color: str = "#000000"):
     """
-    Creates an image with the specified text centered within the given dimensions and saves it as a PNG file.
+    Creates an image with the specified text centered within the given 
+        dimensions and saves it as a PNG file.
     Args:
         text (str): The text to be displayed on the image.
         height (int): The height of the image in pixels.
         width (int): The width of the image in pixels.
-        file_name (str): The name of the file to save the image as, including the file extension (e.g., 'image.png').
-        color (str, optional): The color of the text in hexadecimal format (default is black, "#000000").
+        file_name (str): The name of the file to save the image as, 
+            including the file extension (e.g., 'image.png').
+        color (str, optional): The color of the text in hexadecimal 
+            format (default is black, "#000000").
     Raises:
         ValueError: If the text cannot fit into the image at the minimum font size.
     Returns:
@@ -131,6 +137,7 @@ def create_text_image(text: str, height: int, width: int, file_name: str, color:
 
 
 def does_text_fit(draw, text, font, width, height):
+    """Determines if the text fits within the specified width and height with the given font."""
     ascent, descent = font.getmetrics()
     line_spacing = int(font.size * 0.2)  # 20% of font size
 
@@ -171,26 +178,26 @@ def does_text_fit(draw, text, font, width, height):
 
 if __name__ == "__main__":
     # Create output directory if it doesn't exist
-    output_dir = "../img/test/"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    OUTPUT_DIR = "../img/test/"
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
 
     # Example usage:
     create_text_image(
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         800,
         1200,
-        os.path.join(output_dir, "test_1.png"),
+        os.path.join(OUTPUT_DIR, "test_1.png"),
         "#000000"
     )
     create_text_image(
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         800,
         400,
-        os.path.join(output_dir, "test_2.png"),
+        os.path.join(OUTPUT_DIR, "test_2.png"),
         "#FF5733"
     )
     create_text_image("Lorem ipsum dolor sit amet", 800, 1200,
-                      os.path.join(output_dir, "test_3.png"))
+                      os.path.join(OUTPUT_DIR, "test_3.png"))
     create_text_image("Lorem ipsum dolor sit amet", 800, 400,
-                      os.path.join(output_dir, "test_4.png"), "#FFFFFF")
+                      os.path.join(OUTPUT_DIR, "test_4.png"), "#FFFFFF")

@@ -1,6 +1,8 @@
+"""This module contains the pydantic models for the tshirt resource"""
 from pydantic import BaseModel
 
-class tshirt_from_ai(BaseModel):
+
+class TshirtFromAi(BaseModel):
     """A pydantic model for ai generated fields"""
     title: str
     description: str
@@ -8,6 +10,7 @@ class tshirt_from_ai(BaseModel):
     tshirt_text: str
     marketing_tags: list[str]
 
-class tshirt_from_ai_list(BaseModel):
+
+class TshirtFromAiList(BaseModel):
     """A pydantic model for a list of ai generated fields"""
-    patterns: list[tshirt_from_ai]
+    patterns: list[TshirtFromAi]

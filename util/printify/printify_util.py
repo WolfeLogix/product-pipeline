@@ -1,20 +1,22 @@
-import requests
+"""This is a utility class for listing and creating products in Printify."""
 from os import getenv
-import uuid
 import random
 import time
+
+import requests
 
 current_time = int(time.time())
 random.seed(current_time)
 
-class printify_util():
+
+class PrintifyUtil():
     """
     This class sets up the Printify API connection.
     Documentation: https://developers.printify.com/
     Store Login: https://printify.com/app/dashboard
     Printify Rate Limit is 600 requests per minute, returns 429 if exceeded.
     """
-    
+
     def __init__(self):
         """This method initializes the variables required for the connection."""
         self.API_KEY = getenv('PRINTIFY_API_KEY')
@@ -26,7 +28,6 @@ class printify_util():
         self.fetch_store_id()
         self.typical_size_price = 2399
         self.extended_size_price = 2999
-
 
     def fetch_store_id(self):
         """Fetches the store ID from the Printify API and stores it in self.store_id."""
@@ -41,7 +42,8 @@ class printify_util():
             else:
                 print("No stores found in the response.")
         else:
-            print(f"Failed to fetch stores. Status code: {response.status_code}")
+            print(f"Failed to fetch stores. Status code: {
+                  response.status_code}")
 
     def get_product_catalog(self):
         """Fetches and prints the product catalog from the Printify API."""
@@ -53,14 +55,17 @@ class printify_util():
             # with open("catalog.json", "wb") as file:
             #     file.write(response.text.encode('utf-8'))
         else:
-            print(f"Failed to fetch product catalog. Status code: {response.status_code}")
+            print(f"Failed to fetch product catalog. Status code: {
+                  response.status_code}")
 
     def get_all_providers(self, blueprint_id):
         """Given a blueprint_id, get all print providers for that blueprint."""
-        uri = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers.json"
+        uri = f"{
+            self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers.json"
         response = requests.get(uri, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch print providers. Status code: {response.status_code}")
+            print(f"Failed to fetch print providers. Status code: {
+                  response.status_code}")
         print("Successully fetched print providers")
         # Parse response
         provider_ids = []
@@ -68,15 +73,16 @@ class printify_util():
             provider_ids.append(provider['id'])
         return provider_ids
 
-
     def get_all_variants(self, blueprint_id, print_provider_id):
         """Given a product ID and print provider id get all unique variants per print provider"""
         # get all variants for each print provider and return a list dictionaries that include id, color, size, and for each placeholder with position front a height and width
         # https://api.printify.com/v1/catalog/blueprints/{{blueprint_id}}/print_providers/{{print_provider_id}}/variants.json
-        url = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers/{print_provider_id}/variants.json"
+        url = f"{self.BASE_URL}/catalog/blueprints/{
+            blueprint_id}/print_providers/{print_provider_id}/variants.json"
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch product catalog. Status code: {response.status_code}")
+            print(f"Failed to fetch product catalog. Status code: {
+                  response.status_code}")
         print("Successully fetched variants")
         # Parse response
         return_response = []
@@ -84,11 +90,12 @@ class printify_util():
         default_variant_set = False
 
         for variant in response.json()['variants']:
-            for placeholder in variant['placeholders']: # TODO - Remove this nested loop
+            # TODO - Remove this nested loop
+            for placeholder in variant['placeholders']:
                 price = None
                 default_variant = False
                 match variant['options']['size']:
-                    case "XS": 
+                    case "XS":
                         price = self.typical_size_price
                     case "S":
                         price = self.typical_size_price
@@ -106,9 +113,9 @@ class printify_util():
                         continue
                 if variant['options']['color'] not in [
                     "Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Orange", "purple"
-                    ]:
+                ]:
                     continue
-                return_response.append({ 
+                return_response.append({
                     'id': variant['id'],
                     # 'color': variant['options']['color'],
                     # 'size': variant['options']['size'],
@@ -123,10 +130,12 @@ class printify_util():
 
     def get_shipping_costs(self, blueprint_id, print_provider_id):
         """Given a product ID, print provider id, and variants, get USA shipping costs for each variant"""
-        url = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers/{print_provider_id}/shipping.json"
+        url = f"{self.BASE_URL}/catalog/blueprints/{
+            blueprint_id}/print_providers/{print_provider_id}/shipping.json"
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch shipping costs. Status code: {response.status_code}")
+            print(f"Failed to fetch shipping costs. Status code: {
+                  response.status_code}")
 
         # Parse response
         for shipping_cost in response.json().get("profiles"):
@@ -151,21 +160,21 @@ class printify_util():
             print(response.json()['id'])
             return response.json()['id']
         else:
-            print(f"Failed to upload image. Status code: {response.status_code}")
+            print(f"Failed to upload image. Status code: {
+                  response.status_code}")
             return None
         # {'id': '66eb5eb5557b6ed02c9276aa', 'file_name': 'HelloWorld_white.png', 'height': 3700, 'width': 3300, 'size': 32789, 'mime_type': 'image/png', 'preview_url': 'https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/19824847/8d1780de-bc40-49b2-bb05-8eb1908aa214', 'upload_time': '2024-09-18 23:13:57'}
 
-
     def create_product(
-            self, 
-            blueprint_id, 
-            print_provider_id, 
-            variants, 
+            self,
+            blueprint_id,
+            print_provider_id,
+            variants,
             image_id,
             title,
             description,
             marketing_tags
-            ):
+    ):
         """Creates a product in Printify."""
         url = f"{self.BASE_URL}/shops/{self.store_id}/products.json"
         product = {
@@ -174,7 +183,8 @@ class printify_util():
             "blueprint_id": blueprint_id,
             "print_provider_id": print_provider_id,
             "tags": marketing_tags,
-            "variants": variants, # [{"id": 123, "price": 1999, is_enabled: true}]
+            # [{"id": 123, "price": 1999, is_enabled: true}]
+            "variants": variants,
             "print_areas": [
                 {
                     "variant_ids": [variant['id'] for variant in variants],
@@ -190,7 +200,7 @@ class printify_util():
                                     "angle": 0
                                 }
                             ]
-                            
+
                         }
                     ]
                 }
@@ -203,14 +213,16 @@ class printify_util():
             # # write response to a file
             # with open("product.json", "wb") as file:
             #     file.write(response.text.encode('utf-8'))
-            
+
         else:
-            print(f"Failed to create product. Status code: {response.status_code}")
+            print(f"Failed to create product. Status code: {
+                  response.status_code}")
             return None
 
     def publish_product(self, product_id):
         """Publishes a product in Printify."""
-        url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
+        url = f"{
+            self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
         data = {
             "title": True,
             "description": True,
@@ -225,7 +237,7 @@ class printify_util():
             print(f"Product published successfully: {product_id}")
             print(response.json())
         else:
-            print(f"Failed to publish product. Status code: {response.status_code}")
+            print(f"Failed to publish product. Status code: {
+                  response.status_code}")
 
-
-        # TODO - update product with correct prices after shipping cost and cogs 
+        # TODO - update product with correct prices after shipping cost and cogs
