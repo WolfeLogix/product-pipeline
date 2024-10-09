@@ -1,3 +1,4 @@
+"""This module provides a utility class for uploading files to a Github repository."""
 import os
 import datetime
 import re
@@ -7,6 +8,8 @@ from git import Repo
 
 
 class GithubUploader:
+    """This class provides methods to upload files to a Github repository."""
+
     def __init__(self, directory, repo_url, access_token):
         self.directory = directory
         self.repo_url = repo_url
@@ -37,12 +40,14 @@ class GithubUploader:
         self.github_repo = self.g.get_repo(f'{self.owner}/{self.repo_name}')
 
     def clone_repo(self):
+        """Clone the repository to the local directory."""
         # Use the access token in the repo URL (Note: be cautious with token security)
         token_repo_url = self.repo_url.replace(
             'https://', f'https://{self.access_token}@')
         Repo.clone_from(token_repo_url, self.repo_dir)
 
     def upload(self):
+        """Upload the files to the Github repository."""
         # Create a new branch
         branch_name = 'upload-' + datetime.datetime.now().strftime('%Y%m%d%H%M%S')
 

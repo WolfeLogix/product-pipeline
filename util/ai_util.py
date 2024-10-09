@@ -1,12 +1,15 @@
-from openai import OpenAI
+"""This is a utility class for interacting with the OpenAI API to generate chat completions."""
 from os import getenv
-from pydantic import BaseModel
 from typing import Optional
 from typing import Type
 
-class ai_util:
+from openai import OpenAI
+from pydantic import BaseModel
+
+
+class AiUtil:
     """
-    ai_util is a utility class for interacting with the OpenAI API to generate chat completions.
+    AiUtil is a utility class for interacting with the OpenAI API to generate chat completions.
     Note: Only compatible with gpt-4o-mini-2024-07-18 and later, gpt-4o-2024-08-06 and later
     Attributes:
         api_key (str): The API key for authenticating with the OpenAI API.
@@ -16,7 +19,7 @@ class ai_util:
         frequency_penalty (float): The penalty for repeated tokens. Default is 0.
     Methods:
         __init__(self, api_key: Optional[str] = None, model: str = "gpt-4o-2024-08-06", temperature: float = 0.7, max_response_len: Optional[int] = None, frequency_penalty: float = 0):
-            Initializes the ai_util instance with the provided parameters.
+            Initializes the AiUtil instance with the provided parameters.
         chat(self, messages: list, output_model: Type[BaseModel]):
             Generates a chat completion based on the provided messages and returns the content of the first choice.
             Args:
@@ -25,9 +28,9 @@ class ai_util:
             Returns:
                 str: The content of the first message choice from the completion.
     """
-    
+
     def __init__(
-            self, 
+            self,
             api_key: Optional[str] = None,
             model: str = "gpt-4o-2024-08-06",
             temperature: float = 0.7,
@@ -41,8 +44,6 @@ class ai_util:
         self.max_response_len = max_response_len
         self.client = OpenAI()
         self.frequency_penalty = frequency_penalty
-
-        
 
     def chat(self, messages: list, output_model: Type[BaseModel]):
         """
@@ -67,19 +68,22 @@ class ai_util:
 
 if __name__ == "__main__":
     # Example usage:
-    ai = ai_util()
-    class joke(BaseModel):
+    ai = AiUtil()
+
+    class Joke(BaseModel):
+        """Pydantic model for a joke."""
         setup: str
         punchline: str
 
-    class jokeList(BaseModel):
-        jokes: list[joke]
+    class JokeList(BaseModel):
+        """Pydantic model for a list of jokes."""
+        jokes: list[Joke]
 
     response = ai.chat(
-        messages = [
+        messages=[
             {"role": "system", "content": "You are a helpful chatbot"},
             {"role": "user", "content": "Give me 10 funny jokes"}
         ],
-        output_model=jokeList
+        output_model=JokeList
     )
     print(response)

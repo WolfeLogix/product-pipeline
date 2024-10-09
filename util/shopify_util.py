@@ -9,7 +9,7 @@ current_time = int(time.time())
 random.seed(current_time)
 
 
-class shopify_util():
+class ShopifyUtil():
     """This class sets up the shopify API connection."""
     
     def __init__(self):

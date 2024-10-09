@@ -1,3 +1,5 @@
+"""This module contains prompts for the application."""
+
 # General Product Description for blueprint 6
 blueprint_6_description = """
 General Product Description:
