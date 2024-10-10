@@ -1,4 +1,5 @@
 # Product Pipeline
+[![PEP8 Style Check](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml)
 
 This project is an ai based data pipeline. You start by suppling an idea for a category of t-shirt. When the pipeline runs, it does a number of things:
 
