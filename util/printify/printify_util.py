@@ -93,6 +93,8 @@ class PrintifyUtil():
             for placeholder in variant['placeholders']:
                 price = None
                 default_variant = False
+                available = True
+                variant_count = 0
                 match variant['options']['size']:
                     case "XS":
                         price = self.typical_size_price
@@ -102,27 +104,47 @@ class PrintifyUtil():
                         price = self.typical_size_price
                     case "L":
                         price = self.typical_size_price
-                        if variant['options']['color'] == "Black" and not default_variant_set:
+                        if variant['options']['color'] == "Heather Sapphire" and not default_variant_set:
                             default_variant = True
                             default_variant_set = True
                     case "XL":
                         price = self.typical_size_price
+                    case "2XL":
+                        price = self.typical_size_price
                     case _:
+                        # Sizes go up to 5XL, however larger sizes are problematic due to variant limitations
                         price = self.extended_size_price
-                        continue
+                        available = False
+
                 if variant['options']['color'] not in [
-                    "Black", "White", "Red", "Blue", "Green", "Yellow", "Pink", "Orange", "purple"
+                    "Black",
+                    "White",
+                    "Cardinal Red",
+                    "Carolina Blue",
+                    "Sport Grey",
+                    "Red",
+                    "Light Pink",
+                    "Navy",
+                    "Sapphire",
+                    "Sunset",
+                    "Turf Green",
+                    "Military Green",
+                    "Heliconia",
+                    "Charcoal",
+                    "Purple",
+                    "Heather Sapphire"
                 ]:
+                    continue
+                if variant_count > 100:
+                    print("TOO MANY VARIANTS, MAXIMUM 100. SKIPPING REMAINING VARIANTS")
                     continue
                 return_response.append({
                     'id': variant['id'],
-                    # 'color': variant['options']['color'],
-                    # 'size': variant['options']['size'],
-                    # 'placeholder': placeholder
                     "price": price,
-                    "is_enabled": True,
+                    "is_enabled": available,
                     "is_default": default_variant
                 })
+                variant_count += 1
                 if placeholder not in unique_print_sizes:
                     unique_print_sizes.append(placeholder)
         return return_response
@@ -156,7 +178,7 @@ class PrintifyUtil():
         print(response.json())
         if response.status_code == 200:
             print(f"Image uploaded successfully: {file_name}")
-            print(response.json()['id'])
+            print("Image ID: ", response.json()['id'])
             return response.json()['id']
         else:
             print(f"Failed to upload image. Status code: {
@@ -233,30 +255,59 @@ class PrintifyUtil():
         }
         response = requests.post(url, headers=self.headers, json=data)
         if response.status_code == 200:
-            print(f"Product published successfully: {product_id}")
-            print(response.json())
+            print(f"Product published: {product_id}")
         else:
             print(f"Failed to publish product. Status code: {
                   response.status_code}")
 
-        # TODO - update product with correct prices after shipping cost and cogs
+    def get_product_by_id(self, product_id):
+        """Fetches a product by ID from the Printify API."""
+        url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}.json"
+        response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            print(f"Successully fetched product: {product_id}")
+            return response.json()
+        print(f"Failed to fetch product. Status code: {response.status_code}")
+
+    def update_product_by_id(self, product_id, product):
+        """Updates a product by ID in Printify."""
+        url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}.json"
+        response = requests.put(url, headers=self.headers, json=product)
+        if response.status_code == 200:
+            print(f"Product updated successfully: {product_id}")
+        else:
+            print(f"Failed to update product. Status code: {
+                  response.status_code}")
+            print(response.json())
+
+    def remove_unavailable_variants(self, product_id):
+        """Removes unavailable variants from a product."""
+        product = self.get_product_by_id(product_id)
+        variants = product['variants']
+        for variant in variants:
+            available = variant.get("is_available")
+            enabled = variant.get("is_enabled")
+            if not available and enabled:
+                enabled = False
+            variant["is_enabled"] = enabled
+        self.update_product_by_id(product_id, {"variants": variants})
+        return variants
 
 
 if __name__ == "__main__":
     printify = PrintifyUtil()
     BLUEPRINT_ID = 6
     PRINT_PROVIDER_ID = 99
-    variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
-    image_id = printify.upload_image(getenv("TEST_IMAGE_URL"))
+    VARIANTS = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+    IMAGE_ID = printify.upload_image(getenv("TEST_IMAGE_URL"))
     PRODUCT_ID = printify.create_product(
         blueprint_id=BLUEPRINT_ID,
         print_provider_id=PRINT_PROVIDER_ID,
-        variants=variants,
-        image_id=image_id,
-        title="TEST",
+        variants=VARIANTS,
+        image_id=IMAGE_ID,
+        title="Variant testing",
         description="TEST",
         marketing_tags=["TEST"]
     )
-
-
-
+    printify.remove_unavailable_variants(PRODUCT_ID)
+    printify.publish_product(PRODUCT_ID)
