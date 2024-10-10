@@ -14,9 +14,39 @@ From there, Printify takes over and the following things happen
 
 ## Reuqired Environment Variables
 
-- PRINTIFY_API_KEY
-- OPENAI_API_KEY
-- SHOPIFY_API_KEY
-- SHOPIFY_API_SECRET
-- SHOPIFY_SHOP_NAME
+Run the following command to generate the required `.env` file. Replace the empty strings with the appropriate values.
 
+```bash
+cat <<EOF > .env
+PRINTIFY_API_KEY=""
+OPENAI_API_KEY=""
+GITHUB_PAT=""
+GITHUB_UPLOAD_REPO=""
+GITHUB_UPLOAD_PREFIX=""
+EOF
+```
+
+Additionally, the shopify utility requires these envronment variables to be set:
+
+```bash
+echo 'SHOPIFY_API_KEY=""' >> .env
+echo 'SHOPIFY_API_SECRET=""' >> .env
+echo 'SHOPIFY_SHOP_NAME=""' >> .env
+```
+
+
+## Running Tests
+
+Formal unit tests are not yet implemented. However, all the functions have a manual test if you run the script directly.
+
+### Main Project
+
+`clear && flake8 --ignore=E501 --exclude=.venv`  
+
+### Image Utility
+
+`python3.12 image_util.py`  
+
+### AI Utility
+
+`python3.12 ai_util.py`  
