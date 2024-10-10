@@ -50,7 +50,6 @@ class PrintifyUtil():
         url = f"{self.BASE_URL}/catalog/products.json"
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
-            data = response.json()
             print("Successully fetched product catalog")
             # with open("catalog.json", "wb") as file:
             #     file.write(response.text.encode('utf-8'))
