@@ -23,15 +23,15 @@ def get_text_width(font, text):
 
 def create_text_image(text: str, height: int, width: int, file_name: str, color: str = "#000000"):
     """
-    Creates an image with the specified text centered within the given 
+    Creates an image with the specified text centered within the given
         dimensions and saves it as a PNG file.
     Args:
         text (str): The text to be displayed on the image.
         height (int): The height of the image in pixels.
         width (int): The width of the image in pixels.
-        file_name (str): The name of the file to save the image as, 
+        file_name (str): The name of the file to save the image as,
             including the file extension (e.g., 'image.png').
-        color (str, optional): The color of the text in hexadecimal 
+        color (str, optional): The color of the text in hexadecimal
             format (default is black, "#000000").
     Raises:
         ValueError: If the text cannot fit into the image at the minimum font size.
@@ -168,8 +168,7 @@ def does_text_fit(draw, text, font, width, height):
         line_spacing * (num_lines - 1)
 
     # Check if any line exceeds width
-    any_line_too_wide = any(get_text_width(font, line)
-                            > width for line in wrapped_text)
+    any_line_too_wide = any(get_text_width(font, line) > width for line in wrapped_text)
 
     # Return whether text fits, the wrapped_text, and total_height
     fits = (total_height <= height) and not any_line_too_wide

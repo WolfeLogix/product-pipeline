@@ -39,7 +39,7 @@ class ShopifyUtil():
         new_product.body_html = "Expertly crafted with 100&#37; cotton, this t-shirt offers unbeatable comfort and breathability. Perfect for everyday wear, its durable design ensures long-lasting quality. Elevate your wardrobe with this versatile and essential piece."
         new_product.tags = "t-shirt, short sleeve, cotton, printful"
 
-       # Define product variants
+        # Define product variants
         colors = ['Black', 'White', 'Blue']
         sizes = ['Small', 'Medium', 'Large']
         variants = []
