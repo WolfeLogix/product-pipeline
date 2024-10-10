@@ -240,3 +240,23 @@ class PrintifyUtil():
                   response.status_code}")
 
         # TODO - update product with correct prices after shipping cost and cogs
+
+
+if __name__ == "__main__":
+    printify = PrintifyUtil()
+    BLUEPRINT_ID = 6
+    PRINT_PROVIDER_ID = 99
+    variants = printify.get_all_variants(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+    image_id = printify.upload_image(getenv("TEST_IMAGE_URL"))
+    PRODUCT_ID = printify.create_product(
+        blueprint_id=BLUEPRINT_ID,
+        print_provider_id=PRINT_PROVIDER_ID,
+        variants=variants,
+        image_id=image_id,
+        title="TEST",
+        description="TEST",
+        marketing_tags=["TEST"]
+    )
+
+
+
