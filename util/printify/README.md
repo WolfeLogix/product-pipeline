@@ -79,7 +79,7 @@ Optionally, retrieve shipping costs for each variant:
 
 ```python
 # Get shipping costs (optional)
-# shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
+shipping_cost = printify.get_shipping_costs(BLUEPRINT_ID, PRINT_PROVIDER_ID)
 ```
 
 ## Upload Images
@@ -106,7 +106,10 @@ PRODUCT_ID = printify.create_product(
     blueprint_id=BLUEPRINT_ID, 
     print_provider_id=PRINT_PROVIDER_ID, 
     variants=variants, 
-    image_id=image_id
+    image_id=image_id,
+    title="TEST",
+    description="TEST",
+    marketing_tags=["TEST"]
 )
 ```
 

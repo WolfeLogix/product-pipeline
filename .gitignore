@@ -133,6 +133,5 @@ cython_debug/
 .vscode/
 
 # Repository Specific files
-img/*
-
+img
 pipeline-img
