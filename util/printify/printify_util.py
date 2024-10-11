@@ -86,6 +86,8 @@ class PrintifyUtil():
         # Parse response
         return_response = []
         default_variant_set = False
+        light_variant_ids = []
+        dark_variant_ids = []
 
         for variant in response.json()['variants']:
             price = None
@@ -113,6 +115,7 @@ class PrintifyUtil():
                     price = self.extended_size_price
                     available = False
 
+            # Manually filter out colors that are not supported
             if variant['options']['color'] not in [
                 "Black",
                 "White",
@@ -137,6 +140,21 @@ class PrintifyUtil():
                 print("TOO MANY VARIANTS, MAXIMUM 100. SKIPPING REMAINING VARIANTS")
                 continue
 
+            # Sort variants into light vs dark colors
+            if variant['options']['color'] in [
+                "White",
+                "Sport Grey",
+                "Light Pink",  # TODO - maybe put this in dark
+                "Sapphire",
+                "Heliconia",
+                "Heather Sapphire"
+            ]:
+                if variant['options']['color'] in ["White", "Sport Grey"]:
+                    light_variant_ids.append(variant['id'])
+                else:
+                    dark_variant_ids.append(variant['id'])
+
+            # Append variants to main variant list
             return_response.append({
                 'id': variant['id'],
                 "price": price,
@@ -144,7 +162,7 @@ class PrintifyUtil():
                 "is_default": default_variant
             })
             variant_count += 1
-        return return_response
+        return return_response, light_variant_ids, dark_variant_ids
 
     def get_shipping_costs(self, blueprint_id, print_provider_id):
         """Given a product ID, print provider id, and variants, get USA shipping costs for each variant"""
@@ -180,6 +198,7 @@ class PrintifyUtil():
         else:
             print(f"Failed to upload image. Status code: {
                   response.status_code}")
+            print(response.json())
             return None
         # {'id': '66eb5eb5557b6ed02c9276aa', 'file_name': 'HelloWorld_white.png', 'height': 3700, 'width': 3300, 'size': 32789, 'mime_type': 'image/png', 'preview_url': 'https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/19824847/8d1780de-bc40-49b2-bb05-8eb1908aa214', 'upload_time': '2024-09-18 23:13:57'}
 
@@ -188,21 +207,22 @@ class PrintifyUtil():
             blueprint_id,
             print_provider_id,
             variants,
-            image_id,
             title,
             description,
-            marketing_tags
+            marketing_tags,
+            text_colors=None,
+            image_id=None,
     ):
         """Creates a product in Printify."""
         url = f"{self.BASE_URL}/shops/{self.store_id}/products.json"
-        product = {
-            "title": title,
-            "description": description,
-            "blueprint_id": blueprint_id,
-            "print_provider_id": print_provider_id,
-            "tags": marketing_tags,
-            "variants": variants,
-            "print_areas": [
+
+        if image_id is not None and text_colors is not None:
+            raise ValueError("Cannot provide both image_id and text_colors")
+
+        print_areas = []
+        # If a single image is provided, use it for all variants
+        if image_id is not None:
+            print_areas = [
                 {
                     "variant_ids": [variant['id'] for variant in variants],
                     "placeholders": [
@@ -222,6 +242,41 @@ class PrintifyUtil():
                     ]
                 }
             ]
+        # If multiple images are provided, use them for each variant
+        else:
+            for color in text_colors:
+                # get the appropriate image id
+                text_image_id = color.get("image_id")
+                print_areas.append(
+                    {
+                        "variant_ids": color.get("variant_ids"),
+                        "placeholders": [
+                            {
+                                "position": "front",
+                                "images": [
+                                    {
+                                        "id": text_image_id,
+                                        "x": 0.5,
+                                        "y": 0.5,
+                                        "scale": 1,
+                                        "angle": 0
+                                    }
+                                ]
+
+                            }
+                        ]
+                    }
+                )
+
+        # Create the product object
+        product = {
+            "title": title,
+            "description": description,
+            "blueprint_id": blueprint_id,
+            "print_provider_id": print_provider_id,
+            "tags": marketing_tags,
+            "variants": variants,
+            "print_areas": print_areas
         }
         response = requests.post(url, headers=self.headers, json=product)
         if response.status_code == 200:

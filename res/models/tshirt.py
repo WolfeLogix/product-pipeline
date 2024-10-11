@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class TshirtFromAi(BaseModel):
     """A pydantic model for ai generated fields"""
-    title: str
+    product_name: str
     description: str
     # tshirt_text is the text that will be printed on the tshirt
     tshirt_text: str

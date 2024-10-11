@@ -91,10 +91,11 @@ class GithubUploader:
                 'https://', f'https://{self.access_token}@')
             origin.set_url(token_repo_url)
 
-            origin.push(refspec=f'{branch_name}:{branch_name}')
-
-            # Reset the remote URL back to the original one
-            origin.set_url(original_url)
+            try:
+                origin.push(refspec=f'{branch_name}:{branch_name}')
+            finally:
+                # Reset the remote URL back to the original one
+                origin.set_url(original_url)
 
             # Create pull request
             pr_title = 'Automated PR - ' + branch_name

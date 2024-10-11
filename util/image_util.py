@@ -1,6 +1,6 @@
 """This is a utility class for creating images with text using the Pillow library."""
 import os
-
+import traceback
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -24,7 +24,7 @@ def get_text_width(font, text):
 def create_text_image(text: str, height: int, width: int, file_name: str, color: str = "#000000"):
     """
     Creates an image with the specified text centered within the given
-        dimensions and saves it as a PNG file.
+    dimensions and saves it as a PNG file.
     Args:
         text (str): The text to be displayed on the image.
         height (int): The height of the image in pixels.
@@ -36,104 +36,125 @@ def create_text_image(text: str, height: int, width: int, file_name: str, color:
     Raises:
         ValueError: If the text cannot fit into the image at the minimum font size.
     Returns:
-        None
+        str: The file name if the image was created successfully, None otherwise.
     """
 
-    # Create a blank transparent image
-    image = Image.new("RGBA", (width, height), (255, 255, 255, 0))
-    draw = ImageDraw.Draw(image)
+    # Ensure the output directory exists
+    output_dir = os.path.dirname(file_name)
+    if not os.path.exists(output_dir):
+        try:
+            os.makedirs(output_dir)
+            print(f"Output directory created: {output_dir}")
+        except Exception as e:
+            print(f"Failed to create output directory: {output_dir}")
+            traceback.print_exc()
+            print(e)
+            return None
 
-    # Font parameters
-    min_font_size = 1
-    max_font_size = 500  # Set an upper limit for font size
+    try:
+        # Create a blank transparent image
+        image = Image.new("RGBA", (width, height), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(image)
 
-    best_font_size = min_font_size
-    best_wrapped_text = None
-    best_total_height = None
+        # Font parameters
+        min_font_size = 1
+        max_font_size = 500  # Set an upper limit for font size
 
-    # Function to find a font that exists on the system
-    def find_font():
-        possible_fonts = [
-            # Common fonts on Mac
-            "/Library/Fonts/Arial.ttf",
-            "/System/Library/Fonts/Supplemental/Arial.ttf",
-            "/Library/Fonts/Helvetica.ttf",
-            "/System/Library/Fonts/Supplemental/Helvetica.ttf",
-            "/Library/Fonts/Times New Roman.ttf",
-            # Common fonts on Windows
-            "C:\\Windows\\Fonts\\Arial.ttf",
-            "C:\\Windows\\Fonts\\times.ttf",
-            "C:\\Windows\\Fonts\\verdana.ttf",
-            # Common fonts on Linux
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-            # PIL default font
-            "arial.ttf",
-            "DejaVuSans.ttf",  # Comes with matplotlib
-        ]
-        for font_path in possible_fonts:
-            if os.path.exists(font_path):
-                return font_path
-        # If none of the above fonts exist, use PIL's default font
-        return None
+        best_font_size = min_font_size
+        best_wrapped_text = None
+        best_total_height = None
 
-    font_path = find_font()
-    if font_path is None:
-        # Use PIL's default font
-        font = ImageFont.load_default()
-    else:
-        font = None  # We'll set the font in the loop
+        # Function to find a font that exists on the system
+        def find_font():
+            possible_fonts = [
+                # Common fonts on Mac
+                "/Library/Fonts/Arial.ttf",
+                "/System/Library/Fonts/Supplemental/Arial.ttf",
+                "/Library/Fonts/Helvetica.ttf",
+                "/System/Library/Fonts/Supplemental/Helvetica.ttf",
+                "/Library/Fonts/Times New Roman.ttf",
+                # Common fonts on Windows
+                "C:\\Windows\\Fonts\\Arial.ttf",
+                "C:\\Windows\\Fonts\\times.ttf",
+                "C:\\Windows\\Fonts\\verdana.ttf",
+                # Common fonts on Linux
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                # PIL default font
+                "arial.ttf",
+                "DejaVuSans.ttf",  # Comes with matplotlib
+            ]
+            for font_path in possible_fonts:
+                if os.path.exists(font_path):
+                    return font_path
+            # If none of the above fonts exist, use PIL's default font
+            return None
 
-    while min_font_size <= max_font_size:
-        font_size = (min_font_size + max_font_size) // 2
+        font_path = find_font()
+        if font_path is None:
+            # Use PIL's default font
+            print("Using PIL's default font.")
+            font = ImageFont.load_default()
+        else:
+            print(f"Using font: {font_path}")
+            font = None  # We'll set the font in the loop
+
+        while min_font_size <= max_font_size:
+            font_size = (min_font_size + max_font_size) // 2
+            if font_path is None:
+                # Use default font
+                font = ImageFont.load_default()
+            else:
+                font = ImageFont.truetype(font_path, size=font_size)
+
+            fits, wrapped_text, total_height = does_text_fit(
+                draw, text, font, width, height)
+            if fits:
+                # This font size fits, try a bigger one
+                best_font_size = font_size
+                best_wrapped_text = wrapped_text
+                best_total_height = total_height
+                min_font_size = font_size + 1
+            else:
+                # Font size too big, try a smaller one
+                max_font_size = font_size - 1
+
+        if best_wrapped_text is None:
+            # Text does not fit even at the minimum font size
+            raise ValueError(
+                "Text cannot fit into the image at the minimum font size.")
+
+        # Use the best font size
         if font_path is None:
             # Use default font
             font = ImageFont.load_default()
         else:
-            font = ImageFont.truetype(font_path, size=font_size)
+            font = ImageFont.truetype(font_path, size=best_font_size)
+        ascent, descent = font.getmetrics()
+        line_spacing = int(best_font_size * 0.2)  # 20% of font size
 
-        fits, wrapped_text, total_height = does_text_fit(
-            draw, text, font, width, height)
-        if fits:
-            # This font size fits, try a bigger one
-            best_font_size = font_size
-            best_wrapped_text = wrapped_text
-            best_total_height = total_height
-            min_font_size = font_size + 1
-        else:
-            # Font size too big, try a smaller one
-            max_font_size = font_size - 1
+        # Adjust total height to include the descent of the last line
+        best_total_height += descent
 
-    if best_wrapped_text is None:
-        # Text does not fit even at the minimum font size
-        raise ValueError(
-            "Text cannot fit into the image at the minimum font size.")
+        # Center position for the text
+        y_offset = (height - best_total_height) / 2
 
-    # Use the best font size
-    if font_path is None:
-        # Use default font
-        font = ImageFont.load_default()
-    else:
-        font = ImageFont.truetype(font_path, size=best_font_size)
-    ascent, descent = font.getmetrics()
-    line_spacing = int(best_font_size * 0.2)  # 20% of font size
+        # Draw the text on the image
+        for line in best_wrapped_text:
+            # Get text width
+            text_width = get_text_width(font, line)
+            x = (width - text_width) / 2  # Center horizontally
+            draw.text((x, y_offset), line, fill=color, font=font)
+            y_offset += ascent + descent + line_spacing  # Move down for the next line
 
-    # Adjust total height to include the descent of the last line
-    best_total_height += descent
+        # Save the image
+        image.save(file_name, "PNG")
+        print(f"Image saved successfully: {file_name}")
+        return file_name
 
-    # Center position for the text
-    y_offset = (height - best_total_height) / 2
-
-    # Draw the text on the image
-    for line in best_wrapped_text:
-        # Get text width
-        text_width = get_text_width(font, line)
-        x = (width - text_width) / 2  # Center horizontally
-        draw.text((x, y_offset), line, fill=color, font=font)
-        y_offset += ascent + descent + line_spacing  # Move down for the next line
-
-    # Save the image
-    image.save(file_name, "PNG")
-    return file_name
+    except Exception as e:
+        print(f"Failed to create image '{file_name}': {e}")
+        traceback.print_exc()
+        return None
 
 
 def does_text_fit(draw, text, font, width, height):
@@ -176,27 +197,22 @@ def does_text_fit(draw, text, font, width, height):
 
 
 if __name__ == "__main__":
-    # Create output directory if it doesn't exist
-    OUTPUT_DIR = "../img/test/"
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
-
     # Example usage:
-    create_text_image(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        800,
-        1200,
-        os.path.join(OUTPUT_DIR, "test_1.png"),
+    text = '"Welcome to the Bug-Free Zone - Powered by Unit Tests"'
+    file_name = "./img/Bug-Free Zone000000.png"
+
+    # Specify image dimensions
+    height = 800
+    width = 1200  # Adjust as needed
+
+    result = create_text_image(
+        text,
+        height,
+        width,
+        file_name,
         "#000000"
     )
-    create_text_image(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        800,
-        400,
-        os.path.join(OUTPUT_DIR, "test_2.png"),
-        "#FF5733"
-    )
-    create_text_image("Lorem ipsum dolor sit amet", 800, 1200,
-                      os.path.join(OUTPUT_DIR, "test_3.png"))
-    create_text_image("Lorem ipsum dolor sit amet", 800, 400,
-                      os.path.join(OUTPUT_DIR, "test_4.png"), "#FFFFFF")
+    if result:
+        print(f"Image created successfully: {result}")
+    else:
+        print("Image creation failed.")

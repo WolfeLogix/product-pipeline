@@ -3,6 +3,7 @@ import os
 import argparse
 import random
 import json
+import uuid
 from datetime import datetime
 from urllib.parse import quote
 
@@ -36,6 +37,10 @@ def main():
     args = parser.parse_args()
     idea = args.idea
     number_of_patterns = args.patterns
+    text_colors = [
+        {"hex": "000000", "shade": "dark"},
+        {"hex": "FFFFFF", "shade": "light"}
+    ]
 
     # Initialize AI
     ai = AiUtil()
@@ -44,7 +49,14 @@ def main():
     printify = PrintifyUtil()
     blueprint = 6  # Unisex Gildan T-Shirt
     printer = 99  # Printify Choice Provider
-    variants = printify.get_all_variants(blueprint, printer)
+    variants, light_ids, dark_ids = printify.get_all_variants(
+        blueprint, printer)
+    # Apply the variant ids to the text colors
+    for color in text_colors:
+        if color.get("shade") == "light":
+            color["variant_ids"] = dark_ids
+        else:
+            color["variant_ids"] = light_ids
 
     # Get patterns from AI
     response = ai.chat(
@@ -60,12 +72,13 @@ def main():
     parsed_response = json.loads(response)
     patterns = parsed_response['patterns']
 
+    # Get the current date and time
+    current_time = datetime.now()
+
     # Create images and push to github
     for pattern in patterns:
-        # [{pattern.title, pattern.description, pattern.tshirt_text}]
-        print(pattern)
-        # Get the current date and time
-        current_time = datetime.now()
+        # Generate a uuid for the pattern
+        pattern["uuid"] = str(uuid.uuid4())
 
         # Format the date and time as a string
         folder_name = f"./img/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}"
@@ -74,20 +87,26 @@ def main():
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
 
-        # generate image
-        create_text_image(
-            text=pattern.get("tshirt_text"),
-            height=1000,
-            width=1000,
-            file_name=f"{folder_name}/{pattern.get('title')}.png",
-            color="#000000"
-        )  # TOOD = make both white text and black text version of this
+        # generate image for color
+        for color in text_colors:
+            hex_value = color.get("hex")
+            create_text_image(
+                text=pattern.get("tshirt_text"),
+                height=2000,
+                width=2000,
+                file_name=f"{
+                    folder_name}/{pattern.get('uuid')}{hex_value}.png",
+                color="#" + hex_value
+            )
+
+    # Display the actual number of patterns generated
+    print(f"\nNumber of Patterns generated: {len(patterns)}\n")
 
     # upload the images to github
     directory_with_images = f"{folder_name}/"
     github_repository_url = os.getenv("GITHUP_UPLOAD_REPO")
     personal_access_token = os.getenv("GITHUB_PAT")
-    print(directory_with_images, github_repository_url, personal_access_token)
+    print(directory_with_images, github_repository_url)
     uploader = GithubUploader(
         directory_with_images,
         github_repository_url,
@@ -99,20 +118,24 @@ def main():
     url_prefix = os.getenv("GITHUB_UPLOAD_PREFIX")
     for pattern in patterns:
         # Upload Image to Printify
-        image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
-            quote(pattern.get('title'))}.png"
-        print("Image URL", image_url)
-        image_id = printify.upload_image(image_url)
+        for color in text_colors:
+            hex_value = color.get("hex")
+            image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
+                quote(pattern.get('uuid'))}{hex_value}.png"
+            print("Image URL", image_url)
+            image_id = printify.upload_image(image_url)
+            # Append the image_id to the text color
+            color["image_id"] = image_id
 
         # Create Product in Printify
         product = printify.create_product(
             blueprint_id=blueprint,
             print_provider_id=printer,
             variants=variants,
-            image_id=image_id,
-            title=pattern.get("title"),
+            title=pattern.get("product_name"),
             description=pattern.get("description"),
-            marketing_tags=pattern.get("marketing_tags")
+            marketing_tags=pattern.get("marketing_tags"),
+            text_colors=text_colors
         )
 
         # Publish the product
