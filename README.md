@@ -48,6 +48,12 @@ Formal unit tests are not yet implemented. However, all the functions have a man
 
 `python3.12 image_util.py`  
 
+## Deployment
+
+### Google Cloud Functions
+
+Stay tuned for the deployment to GCP!
+
 ### AI Utility
 
 `python3.12 ai_util.py`  
