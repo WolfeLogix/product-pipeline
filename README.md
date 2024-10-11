@@ -36,7 +36,6 @@ echo 'SHOPIFY_API_SECRET=""' >> .env
 echo 'SHOPIFY_SHOP_NAME=""' >> .env
 ```
 
-
 ## Running Tests
 
 Formal unit tests are not yet implemented. However, all the functions have a manual test if you run the script directly.
