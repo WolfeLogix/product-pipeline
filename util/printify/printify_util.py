@@ -144,7 +144,7 @@ class PrintifyUtil():
             if variant['options']['color'] in [
                 "White",
                 "Sport Grey",
-                "Light Pink", #TODO - maybe put this in dark
+                "Light Pink",  # TODO - maybe put this in dark
                 "Sapphire",
                 "Heliconia",
                 "Heather Sapphire"
