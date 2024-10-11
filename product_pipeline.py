@@ -3,6 +3,7 @@ import os
 import argparse
 import random
 import json
+import uuid
 from datetime import datetime
 from urllib.parse import quote
 
@@ -71,12 +72,13 @@ def main():
     parsed_response = json.loads(response)
     patterns = parsed_response['patterns']
 
+    # Get the current date and time
+    current_time = datetime.now()
+
     # Create images and push to github
     for pattern in patterns:
-        # [{pattern.title, pattern.description, pattern.tshirt_text}]
-        print(pattern)
-        # Get the current date and time
-        current_time = datetime.now()
+        # Generate a uuid for the pattern
+        pattern["uuid"] = str(uuid.uuid4())
 
         # Format the date and time as a string
         folder_name = f"./img/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}"
@@ -90,18 +92,21 @@ def main():
             hex_value = color.get("hex")
             create_text_image(
                 text=pattern.get("tshirt_text"),
-                height=3000,
+                height=2000,
                 width=2000,
                 file_name=f"{
-                    folder_name}/{pattern.get('title')}{hex_value}.png",
+                    folder_name}/{pattern.get('uuid')}{hex_value}.png",
                 color="#" + hex_value
             )
+
+    # Display the actual number of patterns generated
+    print(f"\nNumber of Patterns generated: {len(patterns)}\n")
 
     # upload the images to github
     directory_with_images = f"{folder_name}/"
     github_repository_url = os.getenv("GITHUP_UPLOAD_REPO")
     personal_access_token = os.getenv("GITHUB_PAT")
-    print(directory_with_images, github_repository_url, personal_access_token)
+    print(directory_with_images, github_repository_url)
     uploader = GithubUploader(
         directory_with_images,
         github_repository_url,
@@ -116,7 +121,7 @@ def main():
         for color in text_colors:
             hex_value = color.get("hex")
             image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
-                quote(pattern.get('title'))}{hex_value}.png"
+                quote(pattern.get('uuid'))}{hex_value}.png"
             print("Image URL", image_url)
             image_id = printify.upload_image(image_url)
             # Append the image_id to the text color
@@ -127,7 +132,7 @@ def main():
             blueprint_id=blueprint,
             print_provider_id=printer,
             variants=variants,
-            title=pattern.get("title"),
+            title=pattern.get("product_name"),
             description=pattern.get("description"),
             marketing_tags=pattern.get("marketing_tags"),
             text_colors=text_colors
