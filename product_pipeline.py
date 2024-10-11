@@ -36,6 +36,7 @@ def main():
     args = parser.parse_args()
     idea = args.idea
     number_of_patterns = args.patterns
+    text_colors = ["000000", "FFFFFF"]
 
     # Initialize AI
     ai = AiUtil()
@@ -74,14 +75,15 @@ def main():
         if not os.path.exists(folder_name):
             os.makedirs(folder_name)
 
-        # generate image
-        create_text_image(
-            text=pattern.get("tshirt_text"),
-            height=1000,
-            width=1000,
-            file_name=f"{folder_name}/{pattern.get('title')}.png",
-            color="#000000"
-        )  # TOOD = make both white text and black text version of this
+        # generate image for color
+        for color in text_colors:
+            create_text_image(
+                text=pattern.get("tshirt_text"),
+                height=4024,
+                width=3232,
+                file_name=f"{folder_name}/{pattern.get('title')}-{color}.png",
+                color="#" + color
+            )
 
     # upload the images to github
     directory_with_images = f"{folder_name}/"
@@ -99,17 +101,20 @@ def main():
     url_prefix = os.getenv("GITHUB_UPLOAD_PREFIX")
     for pattern in patterns:
         # Upload Image to Printify
-        image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
-            quote(pattern.get('title'))}.png"
-        print("Image URL", image_url)
-        image_id = printify.upload_image(image_url)
+        image_ids = []
+        for color in text_colors:
+            image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
+                quote(pattern.get('title'))}-{color}.png"
+            print("Image URL", image_url)
+            image_id = printify.upload_image(image_url)
+            image_ids.append(image_id)
 
         # Create Product in Printify
         product = printify.create_product(
             blueprint_id=blueprint,
             print_provider_id=printer,
             variants=variants,
-            image_id=image_id,
+            image_ids=image_ids,
             title=pattern.get("title"),
             description=pattern.get("description"),
             marketing_tags=pattern.get("marketing_tags")

@@ -188,7 +188,7 @@ class PrintifyUtil():
             blueprint_id,
             print_provider_id,
             variants,
-            image_id,
+            image_id, # This is changing from a single image to a list of images
             title,
             description,
             marketing_tags
