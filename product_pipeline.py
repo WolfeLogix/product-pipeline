@@ -36,7 +36,10 @@ def main():
     args = parser.parse_args()
     idea = args.idea
     number_of_patterns = args.patterns
-    text_colors = ["000000", "FFFFFF"]
+    text_colors = [
+        {"hex": "000000", "shade": "dark"},
+        {"hex": "FFFFFF", "shade": "light"}
+    ]
 
     # Initialize AI
     ai = AiUtil()
@@ -45,7 +48,14 @@ def main():
     printify = PrintifyUtil()
     blueprint = 6  # Unisex Gildan T-Shirt
     printer = 99  # Printify Choice Provider
-    variants = printify.get_all_variants(blueprint, printer)
+    variants, light_ids, dark_ids = printify.get_all_variants(
+        blueprint, printer)
+    # Apply the variant ids to the text colors
+    for color in text_colors:
+        if color.get("shade") == "light":
+            color["variant_ids"] = dark_ids
+        else:
+            color["variant_ids"] = light_ids
 
     # Get patterns from AI
     response = ai.chat(
@@ -77,12 +87,14 @@ def main():
 
         # generate image for color
         for color in text_colors:
+            hex_value = color.get("hex")
             create_text_image(
                 text=pattern.get("tshirt_text"),
-                height=4024,
-                width=3232,
-                file_name=f"{folder_name}/{pattern.get('title')}-{color}.png",
-                color="#" + color
+                height=3000,
+                width=2000,
+                file_name=f"{
+                    folder_name}/{pattern.get('title')}{hex_value}.png",
+                color="#" + hex_value
             )
 
     # upload the images to github
@@ -101,23 +113,24 @@ def main():
     url_prefix = os.getenv("GITHUB_UPLOAD_PREFIX")
     for pattern in patterns:
         # Upload Image to Printify
-        image_ids = []
         for color in text_colors:
+            hex_value = color.get("hex")
             image_url = f"{url_prefix}/{current_time.strftime("%Y-%m-%d_%H-%M-%S")}/{
-                quote(pattern.get('title'))}-{color}.png"
+                quote(pattern.get('title'))}{hex_value}.png"
             print("Image URL", image_url)
             image_id = printify.upload_image(image_url)
-            image_ids.append(image_id)
+            # Append the image_id to the text color
+            color["image_id"] = image_id
 
         # Create Product in Printify
         product = printify.create_product(
             blueprint_id=blueprint,
             print_provider_id=printer,
             variants=variants,
-            image_ids=image_ids,
             title=pattern.get("title"),
             description=pattern.get("description"),
-            marketing_tags=pattern.get("marketing_tags")
+            marketing_tags=pattern.get("marketing_tags"),
+            text_colors=text_colors
         )
 
         # Publish the product
