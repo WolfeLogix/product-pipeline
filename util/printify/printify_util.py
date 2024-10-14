@@ -51,7 +51,8 @@ class PrintifyUtil():
             else:
                 print("No stores found in the response.")
         else:
-            print(f"Failed to fetch stores. Status code: {response.status_code}")
+            print(f"Failed to fetch stores. Status code: {
+                  response.status_code}")
 
     @sleep_and_retry
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
@@ -62,16 +63,19 @@ class PrintifyUtil():
         if response.status_code == 200:
             print("Successfully fetched product catalog")
         else:
-            print(f"Failed to fetch product catalog. Status code: {response.status_code}")
+            print(f"Failed to fetch product catalog. Status code: {
+                  response.status_code}")
 
     @sleep_and_retry
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
     def get_all_providers(self, blueprint_id):
         """Given a blueprint_id, get all print providers for that blueprint."""
-        uri = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers.json"
+        uri = f"{
+            self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers.json"
         response = requests.get(uri, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch print providers. Status code: {response.status_code}")
+            print(f"Failed to fetch print providers. Status code: {
+                  response.status_code}")
         print("Successfully fetched print providers")
         provider_ids = []
         for provider in response.json():
@@ -82,10 +86,12 @@ class PrintifyUtil():
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
     def get_all_variants(self, blueprint_id, print_provider_id):
         """Given a product ID and print provider id get all unique variants per print provider"""
-        url = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers/{print_provider_id}/variants.json"
+        url = f"{self.BASE_URL}/catalog/blueprints/{
+            blueprint_id}/print_providers/{print_provider_id}/variants.json"
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch product catalog. Status code: {response.status_code}")
+            print(f"Failed to fetch product catalog. Status code: {
+                  response.status_code}")
         print("Successfully fetched variants")
         return_response = []
         default_variant_set = False
@@ -167,10 +173,12 @@ class PrintifyUtil():
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
     def get_shipping_costs(self, blueprint_id, print_provider_id):
         """Given a product ID, print provider id, and variants, get USA shipping costs for each variant"""
-        url = f"{self.BASE_URL}/catalog/blueprints/{blueprint_id}/print_providers/{print_provider_id}/shipping.json"
+        url = f"{self.BASE_URL}/catalog/blueprints/{
+            blueprint_id}/print_providers/{print_provider_id}/shipping.json"
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
-            print(f"Failed to fetch shipping costs. Status code: {response.status_code}")
+            print(f"Failed to fetch shipping costs. Status code: {
+                  response.status_code}")
 
         for shipping_cost in response.json().get("profiles"):
             if "US" in shipping_cost.get("countries"):
@@ -194,7 +202,8 @@ class PrintifyUtil():
             print("Image ID: ", response.json()['id'])
             return response.json()['id']
         else:
-            print(f"Failed to upload image. Status code: {response.status_code}")
+            print(f"Failed to upload image. Status code: {
+                  response.status_code}")
             print(response.json())
             return None
 
@@ -277,14 +286,16 @@ class PrintifyUtil():
             print(f"Product created successfully: {response.json()['id']}")
             return response.json()['id']
         else:
-            print(f"Failed to create product. Status code: {response.status_code}")
+            print(f"Failed to create product. Status code: {
+                  response.status_code}")
             return None
 
     @sleep_and_retry
     @limits(calls=PUBLISH_RATE_LIMIT, period=PUBLISH_RATE_PERIOD)
     def publish_product(self, product_id):
         """Publishes a product in Printify."""
-        url = f"{self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
+        url = f"{
+            self.BASE_URL}/shops/{self.store_id}/products/{product_id}/publish.json"
         data = {
             "title": True,
             "description": True,
@@ -296,7 +307,8 @@ class PrintifyUtil():
         if response.status_code == 200:
             print(f"Product published: {product_id}")
         else:
-            print(f"Failed to publish product. Status code: {response.status_code}")
+            print(f"Failed to publish product. Status code: {
+                  response.status_code}")
 
     @sleep_and_retry
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
@@ -318,7 +330,8 @@ class PrintifyUtil():
         if response.status_code == 200:
             print(f"Product updated successfully: {product_id}")
         else:
-            print(f"Failed to update product. Status code: {response.status_code}")
+            print(f"Failed to update product. Status code: {
+                  response.status_code}")
             print(response.json())
 
     @sleep_and_retry
