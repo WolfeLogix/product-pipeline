@@ -1,8 +1,9 @@
-requests
-python-dotenv
-ShopifyAPI
-Pillow
+requests==2.32.3
+python-dotenv==1.0.1
+ShopifyAPI==12.6.0
+pillow==10.4.0
 openai==1.47.1
 pydantic==2.9.2
 PyGithub>=1.58
 GitPython>=3.1.31
+ratelimit==2.2.1
