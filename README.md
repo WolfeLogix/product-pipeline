@@ -14,6 +14,27 @@ From there, Printify takes over and the following things happen
 - products are synced with shopify, and a number of other retailers
 - orders are automatically sent to the print provider when a sale is made
 
+## Running Locally
+
+There are two ways this can be run. The first is as a command line utility, and the second is as a web service.
+to run it as a command line utility, run the following command:
+
+```bash
+python3.12 product_pipeline.py -p 10 "Idea for a t-shirt"
+```
+
+In order to run the application as a web service, run the following command:
+
+```bash
+uvicorn product_pipeline:app --host localhost --port 8080 --reload
+```
+
+## Deployment
+
+### Google Cloud Functions
+
+Stay tuned for the deployment to GCP!
+
 ## Reuqired Environment Variables
 
 Run the following command to generate the required `.env` file. Replace the empty strings with the appropriate values.
@@ -44,6 +65,14 @@ Formal unit tests are not yet implemented. However, all the functions have a man
 
 `clear && flake8 --ignore=E501 --exclude=.venv`  
 
+### FastAPI Component
+
+```bash
+curl -X POST "http://localhost:8080/process_patterns" \
+-H "Content-Type: application/json" \
+-d '{"patterns": 1, "idea": "unit testing"}'
+```
+
 ### Image Utility
 
 `python3.12 image_util.py`  
@@ -52,8 +81,3 @@ Formal unit tests are not yet implemented. However, all the functions have a man
 
 `python3.12 ai_util.py`  
 
-## Deployment
-
-### Google Cloud Functions
-
-Stay tuned for the deployment to GCP!
