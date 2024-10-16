@@ -5,17 +5,17 @@ import json
 import uuid
 from datetime import datetime
 from urllib.parse import quote
-from typing import Optional
 
-from fastapi import FastAPI
-from pydantic import BaseModel
 from dotenv import load_dotenv
+from fastapi import FastAPI
 
 from util.printify.printify_util import PrintifyUtil
 from util.ai_util import AiUtil
 from util.image_util import create_text_image
 from util.github_util import GithubUploader
-from res.models.tshirt import TshirtFromAiList
+from res.models.tshirt import TshirtFromAiList, TshirtWithIds
+from res.models.requests import PatternRequest
+from res.models.responses import PatternResponse
 from res.prompts.tshirt import user_message, blueprint_6_description
 
 # Load environment variables from .env file
@@ -27,17 +27,9 @@ random.seed(int(datetime.now().timestamp()))
 # Initialize FastAPI
 app = FastAPI()
 
-# Define Pydantic models
-class PatternRequest(BaseModel):
-    patterns: Optional[int] = 3  # default to 3 if not provided
-    idea: str
-
-
-class PatternResponse(BaseModel):
-    message: str
-    number_of_patterns: int
-
 # Function to process patterns and idea
+
+
 def process_patterns_and_idea(number_of_patterns, idea):
     text_colors = [
         {"hex": "000000", "shade": "dark"},
@@ -140,26 +132,35 @@ def process_patterns_and_idea(number_of_patterns, idea):
             text_colors=text_colors
         )
 
+        # Add the product_id and image_ids to the pattern
+        pattern.update({
+            "product_id": product,
+            "image_ids": [color.get("image_id") for color in text_colors]
+        })
+
         # Publish the product
         printify.publish_product(product)
 
-    return len(patterns)
+    return patterns
 
-# FastAPI endpoint
+
+# FastAPI Entrypoint
 @app.post("/process_patterns", response_model=PatternResponse)
 def process_patterns(request: PatternRequest):
-    number_of_patterns = request.patterns
-    idea = request.idea
+    patterns = process_patterns_and_idea(
+        request.patterns, request.idea)
 
-    num_generated_patterns = process_patterns_and_idea(
-        number_of_patterns, idea)
+    response_patterns = []
+    for pattern in patterns:
+        response_patterns.append(TshirtWithIds(**pattern))
 
     return PatternResponse(
-        message=f"Number of patterns generated: {num_generated_patterns}",
-        number_of_patterns=num_generated_patterns
+        message="Generated Patterns Successfully",
+        patterns=response_patterns
     )
 
-# If running locally, keep argparse functionality
+
+# Command Line Entrypoint
 if __name__ == "__main__":
     import argparse
     # Set up argument parser

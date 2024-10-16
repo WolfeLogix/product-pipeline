@@ -14,3 +14,9 @@ class TshirtFromAi(BaseModel):
 class TshirtFromAiList(BaseModel):
     """A pydantic model for a list of ai generated fields"""
     patterns: list[TshirtFromAi]
+
+
+class TshirtWithIds(TshirtFromAi):
+    """A pydantic model that extends TshirtFromAi with a product_id"""
+    product_id: str
+    image_ids: list[str]
