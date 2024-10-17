@@ -43,9 +43,9 @@ Run the following command to generate the required `.env` file. Replace the empt
 cat <<EOF > .env
 PRINTIFY_API_KEY=""
 OPENAI_API_KEY=""
-GITHUB_PAT=""
-GITHUB_UPLOAD_REPO=""
-GITHUB_UPLOAD_PREFIX=""
+GH_PAT=""
+GH_UPLOAD_REPO=""
+GH_CONTENT_PREFIX=""
 EOF
 ```
 

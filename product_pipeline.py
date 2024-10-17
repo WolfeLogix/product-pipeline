@@ -98,8 +98,8 @@ def process_patterns_and_idea(number_of_patterns, idea):
 
     # Upload the images to GitHub
     directory_with_images = f"{folder_name}/"
-    github_repository_url = os.getenv("GITHUB_UPLOAD_REPO")
-    personal_access_token = os.getenv("GITHUB_PAT")
+    github_repository_url = os.getenv("GH_UPLOAD_REPO")
+    personal_access_token = os.getenv("GH_PAT")
     print(directory_with_images, github_repository_url)
     uploader = GithubUploader(
         directory_with_images,
@@ -109,7 +109,7 @@ def process_patterns_and_idea(number_of_patterns, idea):
     uploader.upload()
 
     # Send the images to Printify
-    url_prefix = os.getenv("GITHUB_UPLOAD_PREFIX")
+    url_prefix = os.getenv("GH_CONTENT_PREFIX")
     for pattern in patterns:
         # Upload image to Printify
         for color in text_colors:
