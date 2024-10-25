@@ -22,19 +22,20 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-    - name: Configure Docker
-      run: gcloud auth configure-docker
+    ## TODO - Push to dockerhub registry
+    # - name: Configure Docker
+    #   run: gcloud auth configure-docker
 
-    - name: Build Docker image
-      run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA .
+    # - name: Build Docker image
+    #   run: docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA .
 
-    - name: Push Docker image
-      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA
+    # - name: Push Docker image
+    #   run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA
 
-    - name: Deploy to Cloud Run
-      run: |
-        gcloud run deploy my-app \
-          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA \
-          --platform managed \
-          --region ${{ secrets.GCP_REGION }} \
-          --allow-unauthenticated
+    # - name: Deploy to Cloud Run
+    #   run: |
+    #     gcloud run deploy my-app \
+    #       --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/my-app:$GITHUB_SHA \
+    #       --platform managed \
+    #       --region ${{ secrets.GCP_REGION }} \
+    #       --allow-unauthenticated
