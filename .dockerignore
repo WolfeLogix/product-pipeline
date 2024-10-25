@@ -1,0 +1,14 @@
+.env
+.venv
+.vscode
+img
+pipeline-img
+__pycache__/
+**/__pycache__/
+.git
+.github
+.gitignore
+README.md
+Dockerfile
+docker-compose.yml
+

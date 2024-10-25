@@ -10,6 +10,9 @@ COPY requirements.txt .
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Remove the requirements file
+RUN rm requirements.txt
+
 # Update requirements
 RUN apt update && apt upgrade -y
 
