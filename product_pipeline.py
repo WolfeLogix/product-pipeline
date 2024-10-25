@@ -15,7 +15,7 @@ from util.image_util import create_text_image
 from util.github_util import GithubUploader
 from res.models.tshirt import TshirtFromAiList, TshirtWithIds
 from res.models.requests import PatternRequest
-from res.models.responses import PatternResponse
+from res.models.responses import PatternResponse, HealthcheckResponse
 from res.prompts.tshirt import user_message, blueprint_6_description
 
 # Load environment variables from .env file
@@ -160,10 +160,12 @@ def process_patterns(request: PatternRequest):
     )
 
 
-@app.get("/")
-@app.get("/heathcheck")
+@app.get("/", response_model=HealthcheckResponse)
+@app.get("/healthcheck", response_model=HealthcheckResponse)
 def healthcheck():
-    return {"status": "ok"}
+    return HealthcheckResponse(
+        status="OK"
+    )
 
 
 # Command Line Entrypoint
