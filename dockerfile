@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 8080
 
 # Command to run the application
-CMD ["uvicorn", "product_pipeline:app", "--host", "localhost", "--port", "8080"]
+CMD ["uvicorn", "product_pipeline:app", "--host", "0.0.0.0", "--port", "8080"]

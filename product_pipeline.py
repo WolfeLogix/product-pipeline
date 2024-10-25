@@ -160,6 +160,12 @@ def process_patterns(request: PatternRequest):
     )
 
 
+@app.get("/")
+@app.get("/heathcheck")
+def healthcheck():
+    return {"status": "ok"}
+
+
 # Command Line Entrypoint
 if __name__ == "__main__":
     import argparse
