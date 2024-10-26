@@ -15,9 +15,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: TEST
-      run: echo $(basename ${{ github.repository }})
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
@@ -33,8 +30,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/product-pipeline:latest
-          ${{ secrets.DOCKER_USERNAME }}/product-pipeline:${{ github.sha }}
+          ${{ secrets.DOCKER_USERNAME }}/$(basename ${{ github.repository }}):latest
+          ${{ secrets.DOCKER_USERNAME }}/$(basename ${{ github.repository }}):${{ github.sha }}
 
 
 
