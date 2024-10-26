@@ -30,8 +30,8 @@ jobs:
         context: .
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-          ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.sha }}
+          ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:latest
+          ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}:${{ github.sha }}
 
 
 
