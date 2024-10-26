@@ -16,7 +16,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: TEST
-      run: echo ${{ github.repository }}
+      run: echo $(basename ${{ github.repository }})
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
