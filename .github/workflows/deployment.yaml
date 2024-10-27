@@ -54,4 +54,10 @@ jobs:
             --platform managed \
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
-            --project ${{ secrets.GCP_PROJECT_ID }}
+            --project ${{ secrets.GCP_PROJECT_ID }} \
+            # --update-secrets \
+            #   PRINTIFY_API_KEY=PRINTIFY_API_KEY:latest, \
+            #   OPENAI_API_KEY=OPENAI_API_KEY:latest, \
+            #   GH_PAT=GH_PAT:latest, \
+            #   GH_UPLOAD_REPO=GH_UPLOAD_REPO:latest, \
+            #   GH_CONTENT_PREFIX=GH_CONTENT_PREFIX:latest
