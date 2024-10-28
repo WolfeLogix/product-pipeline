@@ -49,15 +49,17 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
-          gcloud run deploy ${{ github.event.repository.name }} \
-            --image ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest \
+          gcloud run deploy $CLOUD_RUN_SERVICE \
+            --image ${{ secrets.DOCKER_USERNAME }}/${{ github.repository_name }}:latest \
             --platform managed \
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated \
             --project ${{ secrets.GCP_PROJECT_ID }} \
-            # --update-secrets \
-            #   PRINTIFY_API_KEY=PRINTIFY_API_KEY:latest, \
-            #   OPENAI_API_KEY=OPENAI_API_KEY:latest, \
-            #   GH_PAT=GH_PAT:latest, \
-            #   GH_UPLOAD_REPO=GH_UPLOAD_REPO:latest, \
-            #   GH_CONTENT_PREFIX=GH_CONTENT_PREFIX:latest
+            --update-secrets \
+              PRINTIFY_API_KEY=PRINTIFY_API_KEY:latest, \
+              OPENAI_API_KEY=OPENAI_API_KEY:latest, \
+              GH_PAT=GH_PAT:latest, \
+              GH_UPLOAD_REPO=GH_UPLOAD_REPO:latest, \
+              GH_CONTENT_PREFIX=GH_CONTENT_PREFIX:latest
+        env:
+          CLOUD_RUN_SERVICE: ${{ github.repository_name }}
