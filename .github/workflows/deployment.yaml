@@ -7,9 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  docker:
     runs-on: ubuntu-latest
-    environment: Production
 
     steps:
       - name: Checkout code
@@ -31,7 +30,16 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ github.sha }}
+
+  gcp:
+    runs-on: ubuntu-latest
+    needs: docker
+    environment: Production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v1
