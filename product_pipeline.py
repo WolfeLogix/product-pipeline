@@ -8,6 +8,7 @@ from urllib.parse import quote
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from requests import get
 
 from util.printify.printify_util import PrintifyUtil
 from util.ai_util import AiUtil
@@ -165,6 +166,57 @@ def process_patterns(request: PatternRequest):
 def healthcheck():
     return HealthcheckResponse(
         status="OK"
+    )
+
+
+@app.get("/full_healthcheck", response_model=HealthcheckResponse)
+def full_healthcheck():
+    services_status = {
+        "printify": "Unknown",
+        "openai": "Unknown",
+        "github": "Unknown"
+    }
+
+    # Check Printify
+    try:
+        printify = PrintifyUtil()
+        printify_response = printify.fetch_store_id()
+        if printify_response is not None:
+            services_status["printify"] = "OK"
+        else:
+            services_status["printify"] = f"Error {
+                printify_response.status_code}"
+    except Exception as e:
+        services_status["printify"] = f"Exception {str(e)}"
+
+    # Check OpenAI
+    try:
+        ai = AiUtil()
+        try:
+            services_status["openai"] = ai.status_check()
+        except Exception as e:
+            services_status["openai"] = f"Error {str(e)}"
+    except Exception as e:
+        services_status["openai"] = f"Exception {str(e)}"
+
+    # Check GitHub
+    try:
+        github_response = get(
+            "https://api.github.com/user/repos",
+            headers={"Authorization": f"Bearer {os.getenv('GH_PAT')}"},
+            timeout=10
+        )
+        if github_response.status_code == 200:
+            services_status["github"] = "OK"
+        else:
+            services_status["github"] = f"Error {github_response.status_code}"
+    except Exception as e:
+        services_status["github"] = f"Exception {str(e)}"
+
+    return HealthcheckResponse(
+        status="OK" if all(
+            status == "OK" for status in services_status.values()) else "Error",
+        details=services_status
     )
 
 

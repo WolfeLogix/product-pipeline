@@ -1,3 +1,5 @@
+from typing import Optional, Dict
+
 from pydantic import BaseModel
 
 from res.models.tshirt import TshirtWithIds
@@ -10,3 +12,4 @@ class PatternResponse(BaseModel):
 
 class HealthcheckResponse(BaseModel):
     status: str
+    details: Optional[Dict[str, str]] = None

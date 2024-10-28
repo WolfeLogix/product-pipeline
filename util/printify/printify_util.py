@@ -48,6 +48,7 @@ class PrintifyUtil():
                 # Collect the first available store ID
                 self.store_id = data[0]['id']
                 print(f"Store ID: {self.store_id}")
+                return self.store_id
             else:
                 print("No stores found in the response.")
         else:

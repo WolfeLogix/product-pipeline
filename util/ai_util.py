@@ -3,6 +3,7 @@ from os import getenv
 from typing import Optional
 from typing import Type
 
+from requests import get
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -64,6 +65,19 @@ class AiUtil:
             response_format=output_model
         )
         return completion.choices[0].message.content
+
+    def status_check(self):
+        """
+        Checks the status of the OpenAI API.
+        Returns:
+            str: The status of the OpenAI API.
+        """
+        get(
+            "https://api.openai.com/v1/models",
+            headers={"Authorization": f"Bearer {self.api_key}"},
+            timeout=10
+        ).raise_for_status()
+        return "OK"
 
 
 if __name__ == "__main__":
