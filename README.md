@@ -1,6 +1,6 @@
 # Product Pipeline
 
-[![CodeQL](https://github.com/parishwolfe/product-pipeline/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/github-code-scanning/codeql) [![PEP8 Style Check](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml)[![Deployment](https://github.com/parishwolfe/product-pipeline/actions/workflows/deployment.yaml/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/deployment.yaml)
+[![CodeQL](https://github.com/parishwolfe/product-pipeline/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/github-code-scanning/codeql) [![PEP8 Style Check](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/pep8.yaml) [![Deployment](https://github.com/parishwolfe/product-pipeline/actions/workflows/deployment.yaml/badge.svg)](https://github.com/parishwolfe/product-pipeline/actions/workflows/deployment.yaml)
 
 This project is an ai based data pipeline. You start by suppling an idea for a category of t-shirt. When the pipeline runs, it does a number of things:
 
