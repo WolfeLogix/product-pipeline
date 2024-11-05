@@ -281,6 +281,11 @@ class PrintifyUtil():
             "tags": marketing_tags,
             "variants": variants,
             "print_areas": print_areas
+            # TODO - Not working as expected!!
+            # "sales_channel_properties": {
+            #     "free_shipping": False,
+            #     "collections": ["test"]
+            # }
         }
         response = requests.post(url, headers=self.headers, json=product)
         if response.status_code == 200:

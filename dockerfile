@@ -19,6 +19,9 @@ RUN apt update && apt upgrade -y && apt install git -y && rm -rf /var/lib/apt/li
 # Use a non-root user
 RUN useradd -m appuser
 
+# Change ownership of the working directory
+RUN chown -R appuser:appuser /app
+
 # Copy the application code and change ownership
 COPY --chown=appuser:appuser . .
 
