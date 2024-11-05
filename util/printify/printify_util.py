@@ -281,7 +281,7 @@ class PrintifyUtil():
             "tags": marketing_tags,
             "variants": variants,
             "print_areas": print_areas
-            ## TODO - Not working as expected!!
+            # TODO - Not working as expected!!
             # "sales_channel_properties": {
             #     "free_shipping": False,
             #     "collections": ["test"]
