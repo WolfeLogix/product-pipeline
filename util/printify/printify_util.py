@@ -98,12 +98,38 @@ class PrintifyUtil():
         default_variant_set = False
         light_variant_ids = []
         dark_variant_ids = []
+        supported_colors = [
+            "Black",
+            "White",
+            "Cardinal Red",
+            "Carolina Blue",
+            "Sport Grey",
+            "Red",
+            "Light Pink",
+            "Navy",
+            "Sapphire",
+            "Sunset",
+            "Turf Green",
+            "Military Green",
+            "Heliconia",
+            "Charcoal",
+            "Purple",
+            "Heather Sapphire"
+        ]
+        # Set a default color for the product
+        default_color = random.choice(supported_colors)
 
         for variant in response.json()['variants']:
             price = None
             default_variant = False
             available = True
             variant_count = 0
+
+            # Don't allow colors that are outside of the supported colors
+            if variant['options']['color'] not in supported_colors:
+                continue
+
+            # Don't allow certain sizes outsidte of the supported sizes
             match variant['options']['size']:
                 case "XS":
                     price = self.typical_size_price
@@ -113,7 +139,8 @@ class PrintifyUtil():
                     price = self.typical_size_price
                 case "L":
                     price = self.typical_size_price
-                    if variant['options']['color'] == "Heather Sapphire" and not default_variant_set:
+                    if variant['options']['color'] == default_color and not default_variant_set:
+                        print("Setting default variant: ", variant['id'], variant['options']['color'])
                         default_variant = True
                         default_variant_set = True
                 case "XL":
@@ -124,43 +151,18 @@ class PrintifyUtil():
                     price = self.extended_size_price
                     available = False
 
-            if variant['options']['color'] not in [
-                "Black",
-                "White",
-                "Cardinal Red",
-                "Carolina Blue",
-                "Sport Grey",
-                "Red",
-                "Light Pink",
-                "Navy",
-                "Sapphire",
-                "Sunset",
-                "Turf Green",
-                "Military Green",
-                "Heliconia",
-                "Charcoal",
-                "Purple",
-                "Heather Sapphire"
-            ]:
-                continue
-
+            # Remove variants if more than 100
             if variant_count > 100:
                 print("TOO MANY VARIANTS, MAXIMUM 100. SKIPPING REMAINING VARIANTS")
                 continue
 
-            if variant['options']['color'] in [
-                "White",
-                "Sport Grey",
-                "Light Pink",
-                "Sapphire",
-                "Heliconia",
-                "Heather Sapphire"
-            ]:
-                if variant['options']['color'] in ["White", "Sport Grey"]:
-                    light_variant_ids.append(variant['id'])
-                else:
-                    dark_variant_ids.append(variant['id'])
+            # Split variants into light and dark colors
+            if variant['options']['color'] in ["White", "Sport Grey"]:
+                light_variant_ids.append(variant['id'])
+            else:
+                dark_variant_ids.append(variant['id'])
 
+            # Append variant to return response
             return_response.append({
                 'id': variant['id'],
                 "price": price,
