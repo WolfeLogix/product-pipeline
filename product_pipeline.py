@@ -165,6 +165,9 @@ def process_patterns_and_idea(number_of_patterns, idea):
             "image_ids": [color.get("image_id") for color in text_colors]
         })
 
+        # Remove all images except the front image
+        printify.only_front_product_images_by_product_id(product)
+
         # Publish the product
         printify.publish_product(product)
 
