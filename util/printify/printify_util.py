@@ -140,7 +140,8 @@ class PrintifyUtil():
                 case "L":
                     price = self.typical_size_price
                     if variant['options']['color'] == default_color and not default_variant_set:
-                        print("Setting default variant: ", variant['id'], variant['options']['color'])
+                        print("Setting default variant: ",
+                              variant['id'], variant['options']['color'])
                         default_variant = True
                         default_variant_set = True
                 case "XL":
@@ -223,7 +224,26 @@ class PrintifyUtil():
             text_colors=None,
             image_id=None,
     ):
-        """Creates a product in Printify."""
+        """
+        Creates a new product on Printify.
+
+        This function is decorated with:
+        - @sleep_and_retry: Ensures that the function will retry after sleeping if a rate limit is hit.
+        - @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD): Enforces the rate limit for the number of calls to the Printify API within a specified period.
+
+        Args:
+            blueprint_id (int): The ID of the blueprint for the product.
+            print_provider_id (int): The ID of the print provider.
+            variants (list): A list of variants for the product.
+            title (str): The title of the product.
+            description (str): The description of the product.
+            marketing_tags (list): A list of marketing tags for the product.
+            text_colors (list, optional): A list of text colors for the product. Defaults to None.
+            image_id (str, optional): The ID of the image for the product. Defaults to None.
+
+        Returns:
+            product_id (str): The ID of the created product. or None if the product creation failed.
+        """
         url = f"{self.BASE_URL}/shops/{self.store_id}/products.json"
 
         if image_id is not None and text_colors is not None:
@@ -356,6 +376,18 @@ class PrintifyUtil():
             variant["is_enabled"] = enabled
         self.update_product_by_id(product_id, {"variants": variants})
         return variants
+
+    @sleep_and_retry
+    @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
+    def only_front_product_images_by_product_id(self, product_id):
+        """Removes all but the front images from a product."""
+        product = self.get_product_by_id(product_id)
+
+        images = product.get("images")
+        for image in images:
+            if image.get("position") != "front":
+                images.remove(image)
+        self.update_product_by_id(product_id, {"images": images})
 
 
 if __name__ == "__main__":
