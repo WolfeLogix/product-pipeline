@@ -15,10 +15,12 @@ from util.printify.printify_util import PrintifyUtil
 from util.ai_util import AiUtil
 from util.image_util import create_text_image
 from util.github_util import GithubUploader
+from util.general_util import remove_surrounding_quotes
 from res.models.tshirt import TshirtFromAiList, TshirtWithIds
 from res.models.requests import PatternRequest
 from res.models.responses import PatternResponse, HealthcheckResponse
 from res.prompts.tshirt import user_message, blueprint_6_description
+
 
 # Load environment variables from .env file
 load_dotenv('.env')
@@ -100,6 +102,8 @@ def process_patterns_and_idea(number_of_patterns, idea):
     for pattern in patterns:
         # Generate a UUID for the pattern
         pattern["uuid"] = str(uuid.uuid4())
+        pattern["tshirt_text"] = remove_surrounding_quotes(
+            pattern["tshirt_text"])
 
         # Format the date and time as a string
         folder_name = f"./img/{current_time.strftime('%Y-%m-%d_%H-%M-%S')}"
