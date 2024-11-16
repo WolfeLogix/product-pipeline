@@ -102,7 +102,8 @@ def process_patterns_and_idea(number_of_patterns, idea):
     for pattern in patterns:
         # Generate a UUID for the pattern
         pattern["uuid"] = str(uuid.uuid4())
-        pattern["tshirt_text"] = remove_surrounding_quotes(pattern["tshirt_text"])
+        pattern["tshirt_text"] = remove_surrounding_quotes(
+            pattern["tshirt_text"])
 
         # Format the date and time as a string
         folder_name = f"./img/{current_time.strftime('%Y-%m-%d_%H-%M-%S')}"

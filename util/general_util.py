@@ -1,5 +1,6 @@
 """General utility functions."""
 
+
 def remove_surrounding_quotes(s):
     """remove_surrounding_quotes removes surrounding quotes from a string."""
     if s.startswith('"') and s.endswith('"'):
@@ -7,6 +8,7 @@ def remove_surrounding_quotes(s):
     if s.startswith('\\"') and s.endswith('\\"'):
         return s[2:-2]
     return s
+
 
 # Examples
 print(remove_surrounding_quotes('"hello"'))  # Output: hello
