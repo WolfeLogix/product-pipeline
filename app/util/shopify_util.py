@@ -16,7 +16,7 @@ class ShopifyUtil():
         """This method initializes the variables required for the connection."""
         SHOP_NAME = getenv('SHOPIFY_SHOP_NAME')
         API_KEY = getenv('SHOPIFY_API_KEY')
-        API_SECRET = getenv('SHOPIFY_API_SECRET')
+        API_SECRET = getenv('SHOPIFY_API_ACCESS_TOKEN')
         SHOP_URL = f"https://{API_KEY}:{API_SECRET}@{SHOP_NAME}.myshopify.com/admin"
 
         if not all([SHOP_NAME, API_KEY, API_SECRET]):
