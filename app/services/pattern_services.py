@@ -129,6 +129,6 @@ def process_patterns_and_idea(number_of_patterns, idea):
         printify.only_front_product_images_by_product_id(product)
 
         # Publish the product
-        printify.publish_product(product)
+        #printify.publish_product(product)
 
     return patterns

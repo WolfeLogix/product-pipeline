@@ -377,16 +377,35 @@ class PrintifyUtil():
         self.update_product_by_id(product_id, {"variants": variants})
         return variants
 
+
     @sleep_and_retry
     @limits(calls=PRINTIFY_RATE_LIMIT, period=PRINTIFY_RATE_PERIOD)
     def only_front_product_images_by_product_id(self, product_id):
-        """Removes all but the front images from a product."""
+        """Updates the product images, ensuring only front images are selected for publishing 
+        and one is set as default."""
         product = self.get_product_by_id(product_id)
 
-        images = product.get("images")
+        # Get all images from the product
+        images = product.get("images", [])
+
+        # Process images
         for image in images:
             if image.get("position") != "front":
-                images.remove(image)
+                # Deselect non-front images
+                image["is_selected_for_publishing"] = False
+            else:
+                # Ensure front images are selected
+                image["is_selected_for_publishing"] = True
+                # Set all front images to non-default initially
+                image["is_default"] = False
+
+        # Randomly set one front image as default
+        front_images = [image for image in images if image.get(
+            "position") == "front"]
+        if front_images:  # Ensure there are front images to choose from
+            random.choice(front_images)["is_default"] = True
+
+        print(f"Images: {images}")
         self.update_product_by_id(product_id, {"images": images})
 
 
