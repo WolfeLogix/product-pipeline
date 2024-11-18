@@ -24,3 +24,7 @@ def process_patterns(request: PatternRequest, api_key: str = Depends(verify_api_
         message="Generated Patterns Successfully",
         patterns=response_patterns
     )
+
+@router.get("/shopify_info")
+def shopify_info():
+    return {"message": "Shopify Info"}

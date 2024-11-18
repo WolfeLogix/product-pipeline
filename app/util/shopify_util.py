@@ -10,7 +10,7 @@ random.seed(current_time)
 
 
 class ShopifyUtil():
-    """This class sets up the shopify API connection."""
+    """This class sets up the Shopify API connection."""
 
     def __init__(self):
         """This method initializes the variables required for the connection."""
@@ -20,7 +20,8 @@ class ShopifyUtil():
         SHOP_URL = f"https://{API_KEY}:{API_SECRET}@{SHOP_NAME}.myshopify.com/admin"
 
         if not all([SHOP_NAME, API_KEY, API_SECRET]):
-            raise ValueError("Missing one or more required environment variables.")
+            raise ValueError(
+                "Missing one or more required environment variables.")
 
         shopify.ShopifyResource.set_site(SHOP_URL)
         self.shop = shopify.Shop.current
@@ -38,12 +39,12 @@ class ShopifyUtil():
             shopify.ShopifyResource.clear_session()
 
     def get_products(self, product_id):
-        """This method retrieves all products from the shopify store."""
+        """This method retrieves all products from the Shopify store."""
         product = shopify.Product.find(product_id)
         return product
 
     def create_product(self):
-        """This method creates a new product in the shopify store."""
+        """This method creates a new product in the Shopify store."""
 
         # Basic product information
         new_product = shopify.Product()
@@ -91,3 +92,34 @@ class ShopifyUtil():
         if not success:
             print("Error saving product:", new_product.errors.full_messages())
         return success
+
+    def update_all_products_to_category(self, category_id):
+        """This method updates all products to a specific product category."""
+        page = 1
+        products_per_page = 250
+
+        while True:
+            products = shopify.Product.find(limit=products_per_page, page=page)
+            if not products:
+                break
+
+            for product in products:
+                product.product_category = {
+                    "product_taxonomy_node_id": category_id}
+                if product.save():
+                    print(f"Updated product ID {
+                          product.id} to category ID {category_id}")
+                else:
+                    print(f"Failed to update product ID {
+                          product.id}", product.errors.full_messages())
+
+            page += 1
+
+    def fetch_product_taxonomy_node_id(self, category_name):
+        """Fetches the taxonomy node ID for a given category name."""
+        taxonomy_nodes = shopify.ProductTaxonomyNode.find()
+        for node in taxonomy_nodes:
+            if node.name.lower() == category_name.lower():
+                return node.id
+        print(f"Category {category_name} not found in taxonomy.")
+        return None
