@@ -23,7 +23,7 @@ RUN useradd -m appuser
 RUN chown -R appuser:appuser /app
 
 # Copy the application code and change ownership
-COPY --chown=appuser:appuser . .
+COPY --chown=appuser:appuser ./app .
 
 # Expose the port
 EXPOSE 8080
@@ -31,4 +31,4 @@ EXPOSE 8080
 USER appuser
 
 # Command to run the application
-CMD ["uvicorn", "product_pipeline:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
