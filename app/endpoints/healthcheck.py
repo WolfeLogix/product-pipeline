@@ -45,7 +45,6 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
     except Exception as e:
         services_status["printify"] = f"Exception {str(e)}"
 
-
     # Check Shopify
     try:
         shopify = ShopifyUtil()
