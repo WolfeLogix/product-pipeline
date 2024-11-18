@@ -53,7 +53,7 @@ Additionally, the shopify utility requires these envronment variables to be set:
 
 ```bash
 echo 'SHOPIFY_API_KEY=""' >> .env
-echo 'SHOPIFY_API_SECRET=""' >> .env
+echo 'SHOPIFY_API_ACCESS_TOKEN=""' >> .env
 echo 'SHOPIFY_SHOP_NAME=""' >> .env
 ```
 

@@ -10,25 +10,46 @@ random.seed(current_time)
 
 
 class ShopifyUtil():
-    """This class sets up the shopify API connection."""
+    """This class sets up the Shopify API connection."""
 
     def __init__(self):
-        """This method intitializes the variables required for the connection."""
+        """This method initializes the variables required for the connection."""
         SHOP_NAME = getenv('SHOPIFY_SHOP_NAME')
         API_KEY = getenv('SHOPIFY_API_KEY')
-        API_SECRET = getenv('SHOPIFY_API_SECRET')
+        API_SECRET = getenv('SHOPIFY_API_ACCESS_TOKEN')
         SHOP_URL = f"https://{API_KEY}:{API_SECRET}@{SHOP_NAME}.myshopify.com/admin"
+
+        if not all([SHOP_NAME, API_KEY, API_SECRET]):
+            raise ValueError(
+                "Missing one or more required environment variables.")
 
         shopify.ShopifyResource.set_site(SHOP_URL)
         self.shop = shopify.Shop.current
 
-    def get_products(self, product_id):
-        """This method retrieves all products from the shopify store."""
+    def healthcheck(self):
+        """Check the health of the Shopify API connection."""
+        try:
+            self.shop = shopify.Shop.current()
+            print("API connection successful.")
+            return "OK"
+        except Exception as e:
+            print(f"API connection failed: {e}")
+            return "ERROR"
+        finally:
+            shopify.ShopifyResource.clear_session()
+
+    def get_product(self, product_id):
+        """This method retrieves all products from the Shopify store."""
         product = shopify.Product.find(product_id)
         return product
 
+    def get_all_products(self):
+        """This method retrieves all products from the Shopify store."""
+        products = shopify.Product.find()
+        return products
+
     def create_product(self):
-        """This method creates a new product in the shopify store."""
+        """This method creates a new product in the Shopify store."""
 
         # Basic product information
         new_product = shopify.Product()

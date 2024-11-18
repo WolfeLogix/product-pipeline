@@ -8,9 +8,3 @@ def remove_surrounding_quotes(s):
     if s.startswith('\\"') and s.endswith('\\"'):
         return s[2:-2]
     return s
-
-
-# Examples
-print(remove_surrounding_quotes('"hello"'))  # Output: hello
-print(remove_surrounding_quotes('\\"hello\\"'))  # Output: hello
-print(remove_surrounding_quotes('hello'))  # Output: hello
