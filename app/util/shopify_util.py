@@ -13,14 +13,29 @@ class ShopifyUtil():
     """This class sets up the shopify API connection."""
 
     def __init__(self):
-        """This method intitializes the variables required for the connection."""
+        """This method initializes the variables required for the connection."""
         SHOP_NAME = getenv('SHOPIFY_SHOP_NAME')
         API_KEY = getenv('SHOPIFY_API_KEY')
         API_SECRET = getenv('SHOPIFY_API_SECRET')
         SHOP_URL = f"https://{API_KEY}:{API_SECRET}@{SHOP_NAME}.myshopify.com/admin"
 
+        if not all([SHOP_NAME, API_KEY, API_SECRET]):
+            raise ValueError("Missing one or more required environment variables.")
+
         shopify.ShopifyResource.set_site(SHOP_URL)
         self.shop = shopify.Shop.current
+
+    def healthcheck(self):
+        """Check the health of the Shopify API connection."""
+        try:
+            self.shop = shopify.Shop.current()
+            print("API connection successful.")
+            return "OK"
+        except Exception as e:
+            print(f"API connection failed: {e}")
+            return "ERROR"
+        finally:
+            shopify.ShopifyResource.clear_session()
 
     def get_products(self, product_id):
         """This method retrieves all products from the shopify store."""

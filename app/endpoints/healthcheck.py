@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from requests import get
 
 from util.printify.printify_util import PrintifyUtil
+from util.shopify_util import ShopifyUtil
 from util.ai_util import AiUtil
 from res.models.responses import HealthcheckResponse
 from middleware.security import verify_api_key
@@ -27,6 +28,7 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
     """This endpoint checks the status of all services used by the API."""
     services_status = {
         "printify": "Unknown",
+        "shopify": "Unknown",
         "openai": "Unknown",
         "github": "Unknown"
     }
@@ -42,6 +44,17 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
                 printify_response.status_code}"
     except Exception as e:
         services_status["printify"] = f"Exception {str(e)}"
+
+
+    # Check Shopify
+    try:
+        shopify = ShopifyUtil()
+        try:
+            services_status["shopify"] = shopify.healthcheck()
+        except Exception as e:
+            services_status["shopify"] = f"Error {str(e)}"
+    except Exception as e:
+        services_status["shopify"] = f"Exception {str(e)}"
 
     # Check OpenAI
     try:
