@@ -38,10 +38,15 @@ class ShopifyUtil():
         finally:
             shopify.ShopifyResource.clear_session()
 
-    def get_products(self, product_id):
+    def get_product(self, product_id):
         """This method retrieves all products from the Shopify store."""
         product = shopify.Product.find(product_id)
         return product
+
+    def get_all_products(self):
+        """This method retrieves all products from the Shopify store."""
+        products = shopify.Product.find()
+        return products
 
     def create_product(self):
         """This method creates a new product in the Shopify store."""
@@ -92,34 +97,3 @@ class ShopifyUtil():
         if not success:
             print("Error saving product:", new_product.errors.full_messages())
         return success
-
-    def update_all_products_to_category(self, category_id):
-        """This method updates all products to a specific product category."""
-        page = 1
-        products_per_page = 250
-
-        while True:
-            products = shopify.Product.find(limit=products_per_page, page=page)
-            if not products:
-                break
-
-            for product in products:
-                product.product_category = {
-                    "product_taxonomy_node_id": category_id}
-                if product.save():
-                    print(f"Updated product ID {
-                          product.id} to category ID {category_id}")
-                else:
-                    print(f"Failed to update product ID {
-                          product.id}", product.errors.full_messages())
-
-            page += 1
-
-    def fetch_product_taxonomy_node_id(self, category_name):
-        """Fetches the taxonomy node ID for a given category name."""
-        taxonomy_nodes = shopify.ProductTaxonomyNode.find()
-        for node in taxonomy_nodes:
-            if node.name.lower() == category_name.lower():
-                return node.id
-        print(f"Category {category_name} not found in taxonomy.")
-        return None

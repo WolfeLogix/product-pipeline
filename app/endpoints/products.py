@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-
 from services.pattern_services import process_patterns_and_idea
+from services.shopify_services import set_taxonomy_nodeID
 from res.models.tshirt import TshirtWithIds
 from res.models.requests import PatternRequest
 from res.models.responses import PatternResponse
@@ -27,4 +27,6 @@ def process_patterns(request: PatternRequest, api_key: str = Depends(verify_api_
 
 @router.get("/shopify_info")
 def shopify_info():
-    return {"message": "Shopify Info"}
+
+    message = set_taxonomy_nodeID()
+    return {"message": message}
