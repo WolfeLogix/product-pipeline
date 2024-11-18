@@ -129,7 +129,7 @@ class PrintifyUtil():
             if variant['options']['color'] not in supported_colors:
                 continue
 
-            # Don't allow certain sizes outsidte of the supported sizes
+            # Don't allow certain sizes outside of the supported sizes
             match variant['options']['size']:
                 case "XS":
                     price = self.typical_size_price
