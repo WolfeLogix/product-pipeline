@@ -3,9 +3,9 @@ import time
 from os import getenv
 import requests
 
-
 # Replace these with your actual store details
-SHOPIFY_STORE_URL = f'https://{getenv("SHOPIFY_SHOP_NAME")}.myshopify.com/admin/api/2024-01/graphql.json'
+SHOPIFY_STORE_URL = f'https://{getenv("SHOPIFY_SHOP_NAME")
+                               }.myshopify.com/admin/api/2024-01/graphql.json'
 ACCESS_TOKEN = getenv('SHOPIFY_API_ACCESS_TOKEN')
 
 # Headers for authentication
@@ -77,8 +77,6 @@ def update_product_category(product_id, taxonomy_node_id):
     response.raise_for_status()
     return response.json()
 
-# Main function to iterate through products and update uncategorized ones
-
 
 def update_uncategorized_products(new_taxonomy_node_id):
     cursor = None
@@ -89,10 +87,11 @@ def update_uncategorized_products(new_taxonomy_node_id):
             product_id = product['id']
             title = product['title']
             current_category = product['productCategory']
-            current_taxonomy_node_id = current_category['productTaxonomyNode']['id'] if current_category else None
+            current_taxonomy_node_id = current_category['productTaxonomyNode'][
+                'id'] if current_category and current_category['productTaxonomyNode'] else None
 
-            print(f"Product: {title}")
-            print(f"Current Taxonomy Node ID: {current_taxonomy_node_id}")
+            # print(f"Product: {title}")
+            # print(f"Current Taxonomy Node ID: {current_taxonomy_node_id}")
 
             if not current_taxonomy_node_id:
                 print(f"Updating product '{title}' to taxonomy node ID '{
@@ -104,8 +103,6 @@ def update_uncategorized_products(new_taxonomy_node_id):
                           update_response['errors']}")
                 else:
                     print(f"Product '{title}' updated successfully.")
-            else:
-                print(f"Product '{title}' already has a category assigned.")
 
             # Respect Shopify's API rate limits
             time.sleep(0.5)
@@ -116,9 +113,8 @@ def update_uncategorized_products(new_taxonomy_node_id):
 
 
 def set_taxonomy_nodeID():
-    """This method retrieves all products from the Shopify store and sets their taxonomy node ID to T-Shirts."""
+    """This method retrieves uncategorized products from the Shopify store and sets their taxonomy node ID to T-Shirts."""
     # Replace this with the actual taxonomy node ID for T-Shirts
     NEW_TAXONOMY_NODE_ID = 'gid://shopify/ProductTaxonomyNode/9532'
     update_uncategorized_products(NEW_TAXONOMY_NODE_ID)
     return "ok"
-

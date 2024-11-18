@@ -25,8 +25,8 @@ def process_patterns(request: PatternRequest, api_key: str = Depends(verify_api_
         patterns=response_patterns
     )
 
-@router.get("/shopify_info")
-def shopify_info():
 
+@router.get("/fix_tax_category")
+def correct_taxonomy():
     message = set_taxonomy_nodeID()
     return {"message": message}
