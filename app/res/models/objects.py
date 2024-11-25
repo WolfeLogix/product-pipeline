@@ -1,4 +1,6 @@
 """This module contains the pydantic models for the tshirt resource"""
+from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -20,3 +22,14 @@ class TshirtWithIds(TshirtFromAi):
     """A pydantic model that extends TshirtFromAi with a product_id"""
     product_id: str
     image_ids: list[str]
+
+
+class ProductQueue(BaseModel):
+    """inputs needed to trigger the product pipeline."""
+    idea: str
+    patterns: Optional[int] = 10
+
+
+class ProductQueueWithTimestamp(ProductQueue):
+    """A pydantic model that extends ProductQueue with a timestamp"""
+    timestamp: datetime

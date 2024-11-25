@@ -10,7 +10,7 @@ from util.ai_util import AiUtil
 from util.image_util import create_text_image
 from util.github_util import GithubUploader
 from util.general_util import remove_surrounding_quotes
-from res.models.tshirt import TshirtFromAiList
+from res.models.objects import TshirtFromAiList
 from res.prompts.tshirt import user_message, blueprint_6_description
 
 
