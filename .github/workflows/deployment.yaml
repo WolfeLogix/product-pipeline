@@ -30,7 +30,7 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}/${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}
 
   gcp:
     runs-on: ubuntu-latest
