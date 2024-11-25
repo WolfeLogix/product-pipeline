@@ -60,7 +60,7 @@ jobs:
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy "${CLOUD_RUN_SERVICE}" \
-            --image "${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest" \
+            --image "${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ github.sha }}" \
             --platform managed \
             --region "${{ secrets.GCP_REGION }}" \
             --allow-unauthenticated \
