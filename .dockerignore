@@ -11,4 +11,4 @@ __pycache__/
 README.md
 Dockerfile
 docker-compose.yml
-
+GCP_FIRESTORE_KEY.json
