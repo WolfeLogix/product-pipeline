@@ -94,4 +94,7 @@ def db_healthcheck(api_key: str = Depends(verify_api_key)):
         db = FireStore()
         return db.healthcheck()
     except Exception as e:
-        return {"status": "error", "details": str(e)}
+        # Log the exception details
+        import logging
+        logging.error("Exception occurred in db_healthcheck: %s", str(e))
+        return {"status": "error", "details": "An internal error has occurred."}
