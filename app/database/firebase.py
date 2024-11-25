@@ -4,7 +4,7 @@ from firebase_admin import credentials, firestore, initialize_app
 from firebase_admin.exceptions import FirebaseError
 
 
-class FireStore():
+class FireStore:
 
     def __init__(self):
         """Initialize Firestore."""
@@ -15,20 +15,23 @@ class FireStore():
                 raise EnvironmentError(
                     "FIRESTORE_USER environment variable not set.")
 
-            # Determine if it's a file path or JSON string
-            try:
+            # Determine if it's a JSON string or a file path
+            # Likely a JSON string
+            if credentials_content.strip().startswith("{"):
                 cred_dict = json.loads(credentials_content)
                 cred = credentials.Certificate(cred_dict)
-            except json.JSONDecodeError:
-                if os.path.exists(credentials_content):  # Local: It's a file path
-                    cred = credentials.Certificate(credentials_content)
-                else:
-                    raise ValueError("Invalid credentials content: not a valid JSON string or file path")
+            elif os.path.exists(credentials_content):  # It's a file path
+                cred = credentials.Certificate(credentials_content)
+            else:
+                raise ValueError(
+                    "FIRESTORE_USER environment variable contains invalid content. "
+                    "Ensure it is either a valid JSON string or a file path."
+                )
 
+            # Initialize Firestore
             initialize_app(cred)
-            db = firestore.client()
+            self.db = firestore.client()
             print("Successfully connected to Firestore.")
-            self.db = db
         except Exception as e:
             print(f"Error initializing Firestore: {e}")
             raise
