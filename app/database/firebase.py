@@ -1,5 +1,4 @@
 import os
-import json
 from firebase_admin import credentials, firestore, initialize_app
 from firebase_admin.exceptions import FirebaseError
 
