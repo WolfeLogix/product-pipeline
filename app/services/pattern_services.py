@@ -28,6 +28,8 @@ def process_patterns_and_idea(number_of_patterns, idea):
     printify = PrintifyUtil()
     blueprint = 6  # Unisex Gildan T-Shirt
     printer = 99  # Printify Choice Provider
+
+    # Collect Variants and sort them to light and dark
     variants, light_ids, dark_ids = printify.get_all_variants(
         blueprint, printer)
     # Apply the variant ids to the text colors

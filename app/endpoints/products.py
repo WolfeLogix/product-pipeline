@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 
+from database.firebase import FireStore
 from services.pattern_services import process_patterns_and_idea
 from services.shopify_services import set_taxonomy_nodeID
+from services.database_services import write_tshirt_to_firestore
 from res.models.tshirt import TshirtWithIds
 from res.models.requests import PatternRequest
 from res.models.responses import PatternResponse
@@ -16,9 +18,14 @@ def process_patterns(request: PatternRequest, api_key: str = Depends(verify_api_
     patterns = process_patterns_and_idea(
         request.patterns, request.idea)
 
+    # Initialize Firestore
+    firestore = FireStore()
+
     response_patterns = []
     for pattern in patterns:
-        response_patterns.append(TshirtWithIds(**pattern))
+        shirt = TshirtWithIds(**pattern)
+        response_patterns.append(shirt)
+        write_tshirt_to_firestore(firestore.db, shirt)
 
     return PatternResponse(
         message="Generated Patterns Successfully",

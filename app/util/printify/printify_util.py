@@ -140,8 +140,6 @@ class PrintifyUtil():
                 case "L":
                     price = self.typical_size_price
                     if variant['options']['color'] == default_color and not default_variant_set:
-                        print("Setting default variant: ",
-                              variant['id'], variant['options']['color'])
                         default_variant = True
                         default_variant_set = True
                 case "XL":

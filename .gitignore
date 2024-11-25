@@ -129,9 +129,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Ignore VSCode settings
-.vscode/
-
 # Repository Specific files
 img
 pipeline-img
