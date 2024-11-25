@@ -31,7 +31,8 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
         "printify": "Unknown",
         "shopify": "Unknown",
         "openai": "Unknown",
-        "github": "Unknown"
+        "github": "Unknown",
+        "firestore": "Unknown"
     }
 
     # Check Printify
@@ -80,6 +81,14 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
     except Exception as e:
         services_status["github"] = f"Exception {str(e)}"
 
+    # Check Firestore
+    try:
+        db = FireStore()
+        status = db.healthcheck()
+        services_status["firestore"] = status
+    except Exception as e:
+        services_status["firestore"] = f"Exception {str(e)}"
+
     return HealthcheckResponse(
         status="OK" if all(
             status == "OK" for status in services_status.values()) else "Error",
@@ -92,6 +101,7 @@ def db_healthcheck(api_key: str = Depends(verify_api_key)):
     """Check the health of Firestore."""
     try:
         db = FireStore()
-        return db.healthcheck()
-    except Exception as e:
-        return {"status": "error", "details": str(e)}
+        status = db.healthcheck()
+        return {"status": status}
+    except Exception:
+        return {"status": "error", "details": "An error has occurred, check the logs"}

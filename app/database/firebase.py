@@ -8,7 +8,7 @@ class FireStore:
     def __init__(self):
         """Initialize Firestore."""
         try:
-            # Get the Firestore key from the environment variable
+            # If the environment variable is set, use it to initialize Firestore
             credentials_path = os.getenv("GCP_FIRESTORE_KEY", None)
             cred = None
             if credentials_path:
@@ -29,10 +29,10 @@ class FireStore:
             test_collection = self.db.collection("test")
             test_document = test_collection.document("healthcheck")
             test_document.get()  # Attempt to fetch the document
-            return {"status": "ok"}
+            return "ok"
         except FirebaseError as e:
             print(f"Firestore healthcheck failed: {e}")
-            return {"status": "error", "details": str(e)}
+            return {"status": "error", "details": "A Firebase error occurred."}
         except Exception as e:
             print(f"Unexpected error during healthcheck: {e}")
             return {"status": "error", "details": "Unexpected error occurred."}
