@@ -4,7 +4,7 @@
 import os
 from firebase_admin import credentials, firestore, initialize_app
 
-# Initialize Firestore
+
 def initialize_firestore():
     try:
         # Ensure the environment variable is set

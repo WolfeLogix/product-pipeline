@@ -91,7 +91,7 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
 def db_healthcheck(api_key: str = Depends(verify_api_key)):
     """Check the health of Firestore."""
     try:
-        db=FireStore()
+        db = FireStore()
         return db.healthcheck()
     except Exception as e:
         return {"status": "error", "details": str(e)}
