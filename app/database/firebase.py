@@ -9,10 +9,10 @@ class FireStore():
         """Initialize Firestore."""
         try:
             # Ensure the environment variable is set
-            credentials_path = os.getenv("GCP_FIRESTORE_KEY")
+            credentials_path = os.getenv("FIRESTORE_USER")
             if not credentials_path:
                 raise EnvironmentError(
-                    "GCP_FIRESTORE_KEY environment variable not set."
+                    "FIRESTORE_USER environment variable not set."
                 )
 
             cred = credentials.Certificate(credentials_path)
