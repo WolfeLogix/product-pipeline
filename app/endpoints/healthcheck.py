@@ -3,6 +3,7 @@ import os
 from fastapi import APIRouter, Depends
 from requests import get
 
+from database.firebase import FireStore
 from util.printify.printify_util import PrintifyUtil
 from util.shopify_util import ShopifyUtil
 from util.ai_util import AiUtil
@@ -84,3 +85,13 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
             status == "OK" for status in services_status.values()) else "Error",
         details=services_status
     )
+
+
+@router.get("/healthcheck/db")
+def db_healthcheck(api_key: str = Depends(verify_api_key)):
+    """Check the health of Firestore."""
+    try:
+        db=FireStore()
+        return db.healthcheck()
+    except Exception as e:
+        return {"status": "error", "details": str(e)}

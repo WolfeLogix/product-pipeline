@@ -135,3 +135,4 @@ cython_debug/
 # Repository Specific files
 img
 pipeline-img
+GCP_FIRESTORE_KEY.json

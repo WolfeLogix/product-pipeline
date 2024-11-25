@@ -1,16 +1,17 @@
+"""THIS FILE EXISTS TEMPORARILY TO REFERENCE WHILE DEVELOPING THE FIRESTORE DATABASE"""
+
+
 import os
 from firebase_admin import credentials, firestore, initialize_app
 
 # Initialize Firestore
-
-
 def initialize_firestore():
     try:
         # Ensure the environment variable is set
-        credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+        credentials_path = os.getenv("GCP_FIRESTORE_KEY")
         if not credentials_path:
             raise EnvironmentError(
-                "GOOGLE_APPLICATION_CREDENTIALS environment variable not set.")
+                "GCP_FIRESTORE_KEY environment variable not set.")
 
         cred = credentials.Certificate(credentials_path)
         initialize_app(cred)
