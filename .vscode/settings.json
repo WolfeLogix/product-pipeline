@@ -1,0 +1,6 @@
+{
+    // This sets the root path of the docker container to the workspace folder
+    "python.analysis.extraPaths": [
+        "./app"
+    ]
+}
