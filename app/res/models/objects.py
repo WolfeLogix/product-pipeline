@@ -27,9 +27,9 @@ class TshirtWithIds(TshirtFromAi):
 class ProductQueue(BaseModel):
     """inputs needed to trigger the product pipeline."""
     idea: str
-    patterns: Optional[int] = 10
+    patterns: Optional[int] = 1
 
 
-class ProductQueueWithTimestamp(ProductQueue):
+class QueueItem(ProductQueue):
     """A pydantic model that extends ProductQueue with a timestamp"""
     timestamp: datetime

@@ -1,5 +1,5 @@
 """This file handles database operations."""
-from res.models.objects import TshirtWithIds, ProductQueue
+from res.models.objects import TshirtWithIds, ProductQueue, QueueItem
 
 
 def write_tshirt_to_firestore(db, tshirt: TshirtWithIds):
@@ -14,7 +14,7 @@ def write_tshirt_to_firestore(db, tshirt: TshirtWithIds):
         raise
 
 
-def add_to_queue(db, queue: ProductQueue):
+def add_to_queue(db, queue: QueueItem):
     """Write a ProductQueue object to Firestore."""
     try:
         # Write the ProductQueue object to Firestore
@@ -24,3 +24,16 @@ def add_to_queue(db, queue: ProductQueue):
     except Exception as e:
         print(f"Error writing ProductQueue to Firestore: {e}")
         raise
+
+
+def pop_from_queue(db):
+    """Return and remove the oldest ProductQueue object from Firestore."""
+    # Get the oldest ProductQueue object from Firestore
+    queue_ref = db.collection("ProductQueue").order_by("timestamp").limit(1)
+    queue = queue_ref.get()
+    
+    if queue:
+        # Delete the oldest ProductQueue object from Firestore
+        db.collection("ProductQueue").document(queue[0].id).delete()
+        return QueueItem(**queue[0].to_dict())
+    return None

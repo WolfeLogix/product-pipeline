@@ -6,6 +6,8 @@ from endpoints import healthcheck
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
+from database.firebase import FireStore
+
 
 # Load environment variables from .env file
 load_dotenv('.env')
@@ -14,3 +16,5 @@ load_dotenv('.env')
 app = FastAPI()
 app.include_router(products.router)
 app.include_router(healthcheck.router)
+
+
