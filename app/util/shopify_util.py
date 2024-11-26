@@ -30,7 +30,7 @@ class ShopifyUtil():
         """Check the health of the Shopify API connection."""
         try:
             self.shop = shopify.Shop.current()
-            print("API connection successful.")
+            print("Shopfiy API connection successful.")
             return "OK"
         except Exception as e:
             print(f"API connection failed: {e}")

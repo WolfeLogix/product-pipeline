@@ -27,7 +27,7 @@ class TshirtWithIds(TshirtFromAi):
 class ProductQueue(BaseModel):
     """inputs needed to trigger the product pipeline."""
     idea: str
-    patterns: Optional[int] = 1
+    patterns: Optional[int] = 10
 
 
 class QueueItem(ProductQueue):

@@ -1,5 +1,5 @@
 """This file handles database operations."""
-from res.models.objects import TshirtWithIds, ProductQueue, QueueItem
+from res.models.objects import TshirtWithIds, QueueItem
 
 
 def write_tshirt_to_firestore(db, tshirt: TshirtWithIds):
@@ -31,7 +31,7 @@ def pop_from_queue(db):
     # Get the oldest ProductQueue object from Firestore
     queue_ref = db.collection("ProductQueue").order_by("timestamp").limit(1)
     queue = queue_ref.get()
-    
+
     if queue:
         # Delete the oldest ProductQueue object from Firestore
         db.collection("ProductQueue").document(queue[0].id).delete()
