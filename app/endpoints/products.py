@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 # from database.firebase import FireStore
 from services.pattern_services import process_patterns_and_idea
@@ -76,6 +77,13 @@ def process_pattern_queue(
     """This endpoint processes the pattern queue."""
 
     pattern_to_be = pop_from_queue(firestore_db)
+
+    if pattern_to_be is None:
+        return JSONResponse(
+            content={"message": "No items in queue"},
+            status_code=404
+        )
+
     return process_patterns(
         PatternRequest(
             patterns=pattern_to_be.patterns,
