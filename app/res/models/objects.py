@@ -18,6 +18,7 @@ class TshirtFromAiList(BaseModel):
     patterns: list[TshirtFromAi]
 
 
+# DB COLLECTION: Products
 class TshirtWithIds(TshirtFromAi):
     """A pydantic model that extends TshirtFromAi with a product_id"""
     product_id: str
@@ -30,6 +31,7 @@ class ProductQueue(BaseModel):
     patterns: Optional[int] = 10
 
 
+# DB COLLECTION: ProductQueue
 class QueueItem(ProductQueue):
     """A pydantic model that extends ProductQueue with a timestamp"""
     timestamp: datetime
