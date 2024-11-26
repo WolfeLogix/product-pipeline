@@ -1,9 +1,10 @@
 import os
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 from requests import get
 
-from database.firebase import FireStore
+from database.firebase import get_firestore_db, firestore_healthcheck
 from util.printify.printify_util import PrintifyUtil
 from util.shopify_util import ShopifyUtil
 from util.ai_util import AiUtil
@@ -25,7 +26,10 @@ def healthcheck():
 
 
 @router.get("/full_healthcheck", response_model=HealthcheckResponse)
-def full_healthcheck(api_key: str = Depends(verify_api_key)):
+def full_healthcheck(
+    api_key: str = Depends(verify_api_key),
+    firestore_db=Depends(get_firestore_db)
+):
     """This endpoint checks the status of all services used by the API."""
     services_status = {
         "printify": "Unknown",
@@ -83,25 +87,28 @@ def full_healthcheck(api_key: str = Depends(verify_api_key)):
 
     # Check Firestore
     try:
-        db = FireStore()
-        status = db.healthcheck()
+        status = firestore_healthcheck(firestore_db)
         services_status["firestore"] = status
-    except Exception as e:
-        services_status["firestore"] = f"Exception {str(e)}"
+    except Exception:
+        services_status["firestore"] = "Error: check logs"
 
-    return HealthcheckResponse(
+    response = HealthcheckResponse(
         status="OK" if all(
             status == "OK" for status in services_status.values()) else "Error",
         details=services_status
     )
+    status_code = 200 if response.status == "OK" else 503
+    return JSONResponse(content=response.model_dump(), status_code=status_code)
 
 
 @router.get("/healthcheck/db")
-def db_healthcheck(api_key: str = Depends(verify_api_key)):
+def db_healthcheck(
+    api_key: str = Depends(verify_api_key),
+    firestore_db=Depends(get_firestore_db)
+):
     """Check the health of Firestore."""
     try:
-        db = FireStore()
-        status = db.healthcheck()
+        status = firestore_healthcheck(firestore_db)
         return {"status": status}
     except Exception:
         return {"status": "error", "details": "An error has occurred, check the logs"}

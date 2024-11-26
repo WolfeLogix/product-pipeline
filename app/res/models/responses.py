@@ -2,7 +2,7 @@ from typing import Optional, Dict
 
 from pydantic import BaseModel
 
-from res.models.tshirt import TshirtWithIds
+from res.models.objects import TshirtWithIds
 
 
 class PatternResponse(BaseModel):
