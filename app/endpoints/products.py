@@ -9,7 +9,8 @@ from services.shopify_services import set_taxonomy_nodeID
 from services.database_services import (
     write_tshirt_to_firestore,
     add_to_queue,
-    pop_from_queue
+    pop_from_queue,
+    count_collection
 )
 from database.firebase import get_firestore_db
 from res.models.objects import TshirtWithIds, QueueItem
@@ -91,4 +92,19 @@ def process_pattern_queue(
         ),
         api_key=api_key,
         firestore_db=firestore_db
+    )
+
+
+@router.get("/pattern_queue_count")
+def get_pattern_queue_count(
+    api_key: str = Depends(verify_api_key),
+    firestore_db=Depends(get_firestore_db)
+):
+    """This endpoint returns the number of items in the pattern queue."""
+    count = count_collection(firestore_db, "ProductQueue")
+    return JSONResponse(
+        content={
+            "message": f"There are {count} items in the queue", 
+            "count": count
+        }
     )
