@@ -95,7 +95,7 @@ def process_pattern_queue(
     )
 
 
-@router.get("/pattern_queue_count")
+@router.get("/pattern_queue/count")
 def get_pattern_queue_count(
     api_key: str = Depends(verify_api_key),
     firestore_db=Depends(get_firestore_db)
