@@ -104,7 +104,7 @@ def get_pattern_queue_count(
     count = count_collection(firestore_db, "ProductQueue")
     return JSONResponse(
         content={
-            "message": f"There are {count} items in the queue", 
+            "message": f"There are {count} items in the queue",
             "count": count
         }
     )
