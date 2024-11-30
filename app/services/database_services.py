@@ -37,3 +37,10 @@ def pop_from_queue(db):
         db.collection("ProductQueue").document(queue[0].id).delete()
         return QueueItem(**queue[0].to_dict())
     return None
+
+
+def count_collection(db, collection_name: str):
+    """Return the number of ProductQueue objects in Firestore."""
+    queue_ref = db.collection(collection_name)
+    queue = queue_ref.get()
+    return len(queue)
