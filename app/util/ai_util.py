@@ -2,6 +2,7 @@
 from os import getenv
 from typing import Optional
 from typing import Type
+import httpx
 
 from requests import get
 from openai import OpenAI
@@ -43,7 +44,7 @@ class AiUtil:
         self.model = model
         self.temperature = temperature
         self.max_response_len = max_response_len
-        self.client = OpenAI()
+        self.client = OpenAI(http_client=httpx.Client(proxies={}))
         self.frequency_penalty = frequency_penalty
 
     def chat(self, messages: list, output_model: Type[BaseModel]):
