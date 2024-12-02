@@ -44,7 +44,7 @@ class AiUtil:
         self.model = model
         self.temperature = temperature
         self.max_response_len = max_response_len
-        self.client = OpenAI(http_client=httpx.Client(proxies={}))
+        self.client = OpenAI()
         self.frequency_penalty = frequency_penalty
 
     def chat(self, messages: list, output_model: Type[BaseModel]):
