@@ -2,7 +2,6 @@
 from os import getenv
 from typing import Optional
 from typing import Type
-import httpx
 
 from requests import get
 from openai import OpenAI
