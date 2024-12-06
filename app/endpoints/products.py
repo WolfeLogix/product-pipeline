@@ -6,6 +6,9 @@ from fastapi.responses import JSONResponse
 # from database.firebase import FireStore
 from services.pattern_services import process_patterns_and_idea
 from services.shopify_services import set_taxonomy_nodeID
+from services.shopify.google_merchant import (
+    set_google_attributes
+)
 from services.database_services import (
     write_tshirt_to_firestore,
     add_to_queue,
@@ -47,6 +50,12 @@ def process_patterns(
 @router.get("/fix_tax_category")
 def correct_taxonomy():
     message = set_taxonomy_nodeID()
+    return {"message": message}
+
+@router.get("/set_google_attributes")
+def set_google_merchant_attributes():
+    """This method updates Google attributes for all T-shirts in the Shopify store."""
+    message = set_google_attributes()
     return {"message": message}
 
 
