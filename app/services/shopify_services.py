@@ -14,8 +14,6 @@ HEADERS = {
     'X-Shopify-Access-Token': ACCESS_TOKEN
 }
 
-# GraphQL query to fetch products with pagination
-
 
 def fetch_products(cursor=None):
     query = '''
@@ -25,6 +23,7 @@ def fetch_products(cursor=None):
                 node {
                     id
                     title
+                    productType
                     productCategory {
                         productTaxonomyNode {
                             id
@@ -44,8 +43,6 @@ def fetch_products(cursor=None):
                              'query': query, 'variables': variables})
     response.raise_for_status()
     return response.json()['data']['products']
-
-# GraphQL mutation to update product category
 
 
 def update_product_category(product_id, taxonomy_node_id):
@@ -78,31 +75,38 @@ def update_product_category(product_id, taxonomy_node_id):
     return response.json()
 
 
-def update_uncategorized_products(new_taxonomy_node_id):
+def update_uncategorized_products():
     cursor = None
+    tshirt_taxonomy_node_id = 'gid://shopify/ProductTaxonomyNode/9532'
     while True:
         products_data = fetch_products(cursor)
         for edge in products_data['edges']:
             product = edge['node']
             product_id = product['id']
             title = product['title']
+            product_type = product['productType']
             current_category = product['productCategory']
             current_taxonomy_node_id = current_category['productTaxonomyNode'][
                 'id'] if current_category and current_category['productTaxonomyNode'] else None
 
-            # print(f"Product: {title}")
-            # print(f"Current Taxonomy Node ID: {current_taxonomy_node_id}")
-
+            print(f"Product: {title}, Type: {product_type}")
+            # Check if the product has no taxonomy node ID
             if not current_taxonomy_node_id:
-                print(f"Updating product '{title}' to taxonomy node ID '{
-                      new_taxonomy_node_id}'")
-                update_response = update_product_category(
-                    product_id, new_taxonomy_node_id)
-                if 'errors' in update_response:
-                    print(f"Error updating product '{title}': {
-                          update_response['errors']}")
+                if product_type == "T-Shirt":
+                    print(
+                        f"Assigning taxonomy node ID '{tshirt_taxonomy_node_id}' to product '{
+                            title}' (Type: {product_type})"
+                    )
+                    update_response = update_product_category(
+                        product_id, tshirt_taxonomy_node_id)
+                    if 'errors' in update_response:
+                        print(
+                            f"Error updating product '{title}': {update_response['errors']}")
+                    else:
+                        print(f"Product '{title}' updated successfully.")
                 else:
-                    print(f"Product '{title}' updated successfully.")
+                    print(
+                        f"Product '{title}' (Type: {product_type}) has no taxonomy node and does not match 'T-Shirt'. Skipping.")
 
             # Respect Shopify's API rate limits
             time.sleep(0.5)
@@ -115,6 +119,5 @@ def update_uncategorized_products(new_taxonomy_node_id):
 def set_taxonomy_nodeID():
     """This method retrieves uncategorized products from the Shopify store and sets their taxonomy node ID to T-Shirts."""
     # Replace this with the actual taxonomy node ID for T-Shirts
-    NEW_TAXONOMY_NODE_ID = 'gid://shopify/ProductTaxonomyNode/9532'
-    update_uncategorized_products(NEW_TAXONOMY_NODE_ID)
+    update_uncategorized_products()
     return "ok"
