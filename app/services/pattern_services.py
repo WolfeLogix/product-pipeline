@@ -15,7 +15,7 @@ from res.prompts.tshirt import user_message, blueprint_6_description
 
 
 # Function to process patterns and idea
-def process_patterns_and_idea(number_of_patterns, idea):
+def process_patterns_and_idea(number_of_patterns: int, idea: str, publish: bool):
     text_colors = [
         {"hex": "000000", "shade": "dark"},
         {"hex": "FFFFFF", "shade": "light"}
@@ -130,7 +130,8 @@ def process_patterns_and_idea(number_of_patterns, idea):
         # Remove all images except the front image
         printify.only_front_product_images_by_product_id(product)
 
-        # Publish the product
-        printify.publish_product(product)
+        # Publish the product if the publish flag is set
+        if publish:
+            printify.publish_product(product)
 
     return patterns
