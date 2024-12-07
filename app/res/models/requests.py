@@ -8,7 +8,12 @@ from res.models.objects import ProductQueue
 class PatternRequest(BaseModel):
     patterns: Optional[int] = 3
     idea: str
+    publish: Optional[bool] = False
 
 
-class PatternQueueRequest(BaseModel):
+class PatternQueuePostRequest(BaseModel):
     queue: list[ProductQueue]
+
+
+class PatternQueueGetRequest(BaseModel):
+    publish: Optional[bool] = False

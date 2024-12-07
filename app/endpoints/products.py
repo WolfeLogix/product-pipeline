@@ -14,7 +14,11 @@ from services.database_services import (
 )
 from database.firebase import get_firestore_db
 from res.models.objects import TshirtWithIds, QueueItem
-from res.models.requests import PatternRequest, PatternQueueRequest
+from res.models.requests import (
+    PatternRequest,
+    PatternQueuePostRequest,
+    PatternQueueGetRequest
+)
 from res.models.responses import PatternResponse
 from middleware.security import verify_api_key
 
@@ -30,7 +34,10 @@ def process_patterns(
 ):
     """This endpoint creates the patterns with ideas provided by the user."""
     patterns = process_patterns_and_idea(
-        request.patterns, request.idea)
+        request.patterns,
+        request.idea,
+        request.publish
+    )
 
     response_patterns = []
     for pattern in patterns:
@@ -52,7 +59,7 @@ def correct_taxonomy():
 
 @router.post("/pattern_queue")
 def add_patterns_to_queue(
-    request: PatternQueueRequest,
+    request: PatternQueuePostRequest,
     api_key: str = Depends(verify_api_key),
     firestore_db=Depends(get_firestore_db)
 ):
@@ -72,6 +79,7 @@ def add_patterns_to_queue(
 
 @router.get("/pattern_queue")
 def process_pattern_queue(
+    request: PatternQueueGetRequest,
     api_key: str = Depends(verify_api_key),
     firestore_db=Depends(get_firestore_db)
 ):
@@ -88,7 +96,8 @@ def process_pattern_queue(
     return process_patterns(
         PatternRequest(
             patterns=pattern_to_be.patterns,
-            idea=pattern_to_be.idea
+            idea=pattern_to_be.idea,
+            publish=request.publish
         ),
         api_key=api_key,
         firestore_db=firestore_db
