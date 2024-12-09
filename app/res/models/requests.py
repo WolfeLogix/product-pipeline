@@ -13,7 +13,3 @@ class PatternRequest(BaseModel):
 
 class PatternQueuePostRequest(BaseModel):
     queue: list[ProductQueue]
-
-
-class PatternQueueGetRequest(BaseModel):
-    publish: Optional[bool] = False
