@@ -16,8 +16,7 @@ from database.firebase import get_firestore_db
 from res.models.objects import TshirtWithIds, QueueItem
 from res.models.requests import (
     PatternRequest,
-    PatternQueuePostRequest,
-    PatternQueueGetRequest
+    PatternQueuePostRequest
 )
 from res.models.responses import PatternResponse
 from middleware.security import verify_api_key
@@ -79,7 +78,7 @@ def add_patterns_to_queue(
 
 @router.get("/pattern_queue")
 def process_pattern_queue(
-    request: PatternQueueGetRequest,
+    publish: bool = False,
     api_key: str = Depends(verify_api_key),
     firestore_db=Depends(get_firestore_db)
 ):
@@ -97,7 +96,7 @@ def process_pattern_queue(
         PatternRequest(
             patterns=pattern_to_be.patterns,
             idea=pattern_to_be.idea,
-            publish=request.publish
+            publish=publish
         ),
         api_key=api_key,
         firestore_db=firestore_db
