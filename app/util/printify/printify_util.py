@@ -126,7 +126,7 @@ class PrintifyUtil():
             variant_count = 0
 
             # Don't allow colors that are outside of the supported colors
-            if variant['options']['color'] not in supported_colors:
+            if variant['options'].get('color') not in supported_colors:
                 continue
 
             # Don't allow certain sizes outside of the supported sizes
