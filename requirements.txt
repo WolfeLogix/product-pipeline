@@ -1,4 +1,4 @@
-requests==2.32.4
+requests==2.33.0
 python-dotenv==1.0.1
 ShopifyAPI==12.6.0
 pillow==10.4.0
